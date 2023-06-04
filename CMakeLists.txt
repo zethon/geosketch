@@ -8,11 +8,6 @@ set(CMAKE_MACOSX_RPATH 1)
 option(BUILD_UNIT_TESTS "Build unit tests (default OFF)" OFF)
 option(SHARED_SFML "Use shared SFML libraries (default OFF)" ON)
 
-set(SHARED_SFML_STR "False")
-if (SHARED_SFML)
-    set(SHARED_SFML_STR "True")
-endif(SHARED_SFML)
-
 # initialize conan libs
 include(CMake/conan.cmake)
 conan_cmake_run(REQUIRES
@@ -33,7 +28,7 @@ conan_cmake_run(REQUIRES
         boost:without_system=False 
         boost:without_exception=False
         boost:without_contract=False
-        sfml:shared=${SHARED_SFML_STR}
+        sfml:shared=True
 )
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -77,6 +72,12 @@ if (MSVC)
         /IGNORE:4099
     )
 endif(MSVC)
+
+# Add a RELEASE definition that we can count on regardless
+# of platform
+string(APPEND CMAKE_CXX_FLAGS_RELEASE " -DRELEASE")
+string(APPEND CMAKE_CXX_FLAGS_MINSIZEREL " -DRELEASE")
+
 
 # include TGUI and build only what we need
 set(TGUI_BUILD_GUI_BUILDER FALSE)

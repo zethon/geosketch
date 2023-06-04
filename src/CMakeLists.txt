@@ -14,11 +14,11 @@ set(HEADER_FILES
 #     set(CPACK_NSIS_MODIFY_PATH "ON")
 # endif()
 
-# if(APPLE)
-#     SET(GUI_TYPE MACOSX_BUNDLE)
-#     set(RESOURCE_FILES 
+ if(APPLE)
+     SET(GUI_TYPE MACOSX_BUNDLE)
+#     set(RESOURCE_FILES
 #         "${CMAKE_SOURCE_DIR}/tools/macos/ttvg.icns")
-# endif()
+ endif()
 
 SET_SOURCE_FILES_PROPERTIES(
     ${RESOURCE_FILES}
