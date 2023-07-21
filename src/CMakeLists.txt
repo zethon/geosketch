@@ -3,6 +3,7 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
+    core.h
 )
 
 # if(WIN32)
