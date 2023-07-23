@@ -18,7 +18,7 @@ PollResult Screen::poll(const sf::Event&)
     return {};
 }
 
-ScreenAction Screen::update()
+PollResult Screen::update()
 {
     return {};
 }

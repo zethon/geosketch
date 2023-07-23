@@ -1,7 +1,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include "GeoSketchLogger.h"
 
-namespace tt
+namespace gs
 {
 
 namespace log

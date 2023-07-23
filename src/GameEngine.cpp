@@ -26,7 +26,7 @@ PollResult GameEngine::poll(const sf::Event& e)
     const auto result = _currentScreen->poll(e);
     if (result.type == ActionType::CHANGE_SCREEN)
     {
-        changeScreen(boost::any_cast<std::uint16_t>(result.action.data));
+        changeScreen(boost::any_cast<std::uint16_t>(result.data));
     }
     else if (result.type == ActionType::EXIT_GAME)
     {
@@ -36,7 +36,7 @@ PollResult GameEngine::poll(const sf::Event& e)
     return {};
 }
 
-void GameEnginee::changeScreen(std::uint16_t screenId)
+void GameEngine::changeScreen(std::uint16_t screenId)
 {
     throw std::runtime_error("Not implemented");
 }

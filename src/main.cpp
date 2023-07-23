@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
     gs::GameEngine engine{ win };
 
-    while (win->isOpen)
+    while (win->isOpen())
     {
         sf::Event e;
         while (win->pollEvent(e))
@@ -63,20 +63,28 @@ int main(int argc, char *argv[])
             switch (e.type)
             {
                 default:
+                {
                     const auto result = engine.poll(e);
                     if (result.type == gs::ActionType::EXIT_GAME)
                     {
                         win->close();
                     }
+                }
+                break;
+
+                case sf::Event::EventType::Closed:
+                {
+                    win->close();
+                }
                 break;
             }
-
-            case sf::Event::EventType::Closed:
-            {
-                win->close();
-            }
-            break;
         }
+
+        engine.update();
+
+        win->clear();
+        engine.drawScreen();
+        win->display();
     }
 
     // sf::Font font;

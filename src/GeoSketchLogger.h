@@ -3,8 +3,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include <lua.hpp>
-
 namespace gs
 {
 

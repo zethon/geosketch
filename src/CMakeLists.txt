@@ -1,9 +1,19 @@
 set(SOURCE_FILES
     main.cpp
+    GameEngine.cpp
+    GeoSketchLogger.cpp
+    Screen.cpp
+    SplashScreen.cpp
 )
 
 set(HEADER_FILES
     core.h
+    GameEngine.h
+    GeoSketchLogger.h
+    MainMenuScreen.h
+    PollResult.h
+    Screen.h
+    SplashScreen.h
 )
 
 # if(WIN32)
