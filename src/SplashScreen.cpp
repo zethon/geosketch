@@ -3,17 +3,23 @@
 namespace gs
 {
 
-SplashScreen::SplashScreen(RenderTargetPtr target)
-    : Screen{ target }
+SplashScreen::SplashScreen(sf::RenderTarget& target, ResourceManager& resources)
+    : Screen{ target, resources }
 {
-    // print stuff
+    constexpr auto bgXScale = 0.33f;
+    constexpr auto bgYScale = 0.33f;
+
+    _bg = *(_resources.load<sf::Texture>("images/splash.jpg"));
+    auto sprite = std::make_shared<sf::Sprite>(_bg);
+    sprite->setScale(bgXScale, bgYScale);
+    
+    auto xpos = (_target.getSize().x / 2) - ((_bg.getSize().x * bgXScale) / 2);
+    auto ypos = (_target.getSize().y / 2) - ((_bg.getSize().y * bgYScale) / 2);
+    sprite->setPosition(xpos, ypos - 30);
+    
+    addDrawable(sprite);
 
     _clock.restart();
-}
-
-void SplashScreen::draw()
-{
-
 }
 
 PollResult SplashScreen::poll(const sf::Event&)

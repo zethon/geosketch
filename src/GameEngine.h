@@ -1,10 +1,13 @@
 #pragma once
 #include <memory>
 
+#include "boost/filesystem.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include "Screen.h"
 #include "PollResult.h"
+#include "ResourceManager.h"
 
 namespace gs
 {
@@ -15,7 +18,7 @@ class GameEngine
 {
 
 public:
-    GameEngine(RenderTargetPtr target);
+    GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath);
 
     void drawScreen();
     void update();
@@ -25,9 +28,9 @@ public:
 private:
     void changeScreen(std::uint16_t screenId);
 
-    RenderTargetPtr     _target;
+    sf::RenderTarget&   _target;
     ScreenPtr           _currentScreen;
-
+    ResourceManager     _resources;
 };
 
 

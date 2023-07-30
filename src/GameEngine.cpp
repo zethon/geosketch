@@ -1,12 +1,15 @@
 #include "GameEngine.h"
+#include "SplashScreen.h"
+#include "MainMenuScreen.h"
 
 namespace gs
 {
 
-GameEngine::GameEngine(RenderTargetPtr target)
-    : _target{ target }
+GameEngine::GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath)
+    : _target{ target },
+      _resources{ respath }
 {
-    changeScreen(SCREEN_SPLASH);
+    _currentScreen = std::make_shared<SplashScreen>(_target, _resources);
 }
 
 void GameEngine::drawScreen()
@@ -18,7 +21,12 @@ void GameEngine::drawScreen()
 void GameEngine::update()
 {
     assert(_currentScreen);
-    _currentScreen->update();
+    if (const auto res = _currentScreen->update();
+        res.type == gs::ActionType::CHANGE_SCREEN)
+    {
+        const auto screenId = boost::any_cast<std::uint16_t>(res.data);
+        this->changeScreen(screenId);
+    }
 }
 
 PollResult GameEngine::poll(const sf::Event& e)
@@ -38,7 +46,24 @@ PollResult GameEngine::poll(const sf::Event& e)
 
 void GameEngine::changeScreen(std::uint16_t screenId)
 {
-    throw std::runtime_error("Not implemented");
+    switch (screenId)
+    {
+        default:
+            throw std::runtime_error("invalid screenId");
+        break;
+            
+        case SCREEN_SPLASH:
+            _currentScreen->close();
+            _currentScreen.reset();
+            _currentScreen = std::make_shared<SplashScreen>(_target, _resources);
+        break;
+            
+        case SCREEN_MAINMENU:
+            _currentScreen->close();
+            _currentScreen.reset();
+            _currentScreen = std::make_shared<MainMenuScreen>(_target, _resources);
+        break;
+    }
 }
 
 } // namespace gs

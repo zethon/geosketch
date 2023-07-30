@@ -15,6 +15,8 @@ namespace gs
 
 class MainMenuScreen : public Screen
 {
+public:
+    using Screen::Screen;
 };
 
 } // namespace gs

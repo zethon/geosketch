@@ -7,14 +7,14 @@ class SplashScreen : public Screen
 {
 
 public:
-    SplashScreen(RenderTargetPtr target);
+    SplashScreen(sf::RenderTarget& target, ResourceManager& resources);
 
-    void draw() override;
     PollResult poll(const sf::Event&) override;
     PollResult update() override;
 
 private:
     sf::Clock   _clock;
+    sf::Texture _bg;
 
 };
 

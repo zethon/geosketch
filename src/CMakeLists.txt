@@ -2,6 +2,8 @@ set(SOURCE_FILES
     main.cpp
     GameEngine.cpp
     GeoSketchLogger.cpp
+    GSUtils.cpp
+    ResourceManager.cpp
     Screen.cpp
     SplashScreen.cpp
 )
@@ -10,8 +12,10 @@ set(HEADER_FILES
     core.h
     GameEngine.h
     GeoSketchLogger.h
+    GSUtils.h
     MainMenuScreen.h
     PollResult.h
+    ResourceManager.h
     Screen.h
     SplashScreen.h
 )
