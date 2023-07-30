@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 #include "SplashScreen.h"
 #include "MainMenuScreen.h"
+#include "AudioService.h"
 
 namespace gs
 {
@@ -9,6 +10,7 @@ GameEngine::GameEngine(sf::RenderTarget& target, const boost::filesystem::path& 
     : _target{ target },
       _resources{ respath }
 {
+    initAudioService();
     _currentScreen = std::make_shared<SplashScreen>(_target, _resources);
 }
 
@@ -64,6 +66,18 @@ void GameEngine::changeScreen(std::uint16_t screenId)
             _currentScreen = std::make_shared<MainMenuScreen>(_target, _resources);
         break;
     }
+}
+
+void GameEngine::initAudioService()
+{
+    auto musicptr = std::make_shared<gs::MusicAudio>(_resources);
+    musicptr->setAllVolume(100);
+    
+    auto soundptr = std::make_shared<gs::SfxAudio>(_resources);
+    soundptr->setAllVolume(100);
+    
+    gs::AudioLocator::setMusic(musicptr);
+    gs::AudioLocator::setSound(soundptr);
 }
 
 } // namespace gs

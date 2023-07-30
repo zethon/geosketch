@@ -26,8 +26,9 @@ public:
 
 
 private:
+    void initAudioService();
     void changeScreen(std::uint16_t screenId);
-
+    
     sf::RenderTarget&   _target;
     ScreenPtr           _currentScreen;
     ResourceManager     _resources;
