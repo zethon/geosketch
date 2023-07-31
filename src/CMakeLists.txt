@@ -4,6 +4,7 @@ set(SOURCE_FILES
     GameEngine.cpp
     GeoSketchLogger.cpp
     GSUtils.cpp
+    MainMenuScreen.cpp
     ResourceManager.cpp
     Screen.cpp
     SplashScreen.cpp

@@ -7,8 +7,8 @@ namespace gs
 SplashScreen::SplashScreen(sf::RenderTarget& target, ResourceManager& resources)
     : Screen{ target, resources }
 {
-    constexpr auto bgXScale = 0.33f;
-    constexpr auto bgYScale = 0.33f;
+    constexpr auto bgXScale = 0.66f;
+    constexpr auto bgYScale = 0.66f;
 
     _bg = *(_resources.load<sf::Texture>("images/splash.jpg"));
     auto sprite = std::make_shared<sf::Sprite>(_bg);
@@ -46,7 +46,7 @@ PollResult SplashScreen::poll(const sf::Event&)
 
 PollResult SplashScreen::update()
 {
-    if (_clock.getElapsedTime().asSeconds() > 2)
+    if (_clock.getElapsedTime().asSeconds() > 3)
     {
         gs::AudioLocator::sound()->stop(gs::SplashScreen::INTRO_LOGO);
         return { ActionType::CHANGE_SCREEN, SCREEN_MAINMENU };

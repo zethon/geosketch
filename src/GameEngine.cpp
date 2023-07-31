@@ -70,10 +70,12 @@ void GameEngine::changeScreen(std::uint16_t screenId)
 
 void GameEngine::initAudioService()
 {
-    auto musicptr = std::make_shared<gs::MusicAudio>(_resources);
+    IAudioPtr musicptr = std::make_shared<gs::MusicAudio>(_resources);
+    musicptr = std::make_shared<gs::LoggedAudio>(musicptr);
     musicptr->setAllVolume(100);
     
-    auto soundptr = std::make_shared<gs::SfxAudio>(_resources);
+    IAudioPtr soundptr = std::make_shared<gs::SfxAudio>(_resources);
+    soundptr = std::make_shared<gs::LoggedAudio>(soundptr);
     soundptr->setAllVolume(100);
     
     gs::AudioLocator::setMusic(musicptr);

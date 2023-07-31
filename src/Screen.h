@@ -4,6 +4,8 @@
 #include <boost/any.hpp>
 
 #include <SFML/Graphics.hpp>
+#include <TGUI/Widget.hpp>
+#include <TGUI/TGUI.hpp>
 
 #include "ResourceManager.h"
 #include "PollResult.h"
@@ -32,6 +34,13 @@ public:
 protected:
     ResourceManager&            _resources;
     sf::RenderTarget&           _target;
+    
+    using WidgetCache = std::map<std::string, tgui::Widget::Ptr>;
+    
+    std::unique_ptr<tgui::Gui>  _gui;
+    WidgetCache                 _guicache;
+    PollResult                  _guiResult;
+    
     std::vector<DrawablePtr>    _drawables;
 }; 
 
