@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Screen.h"
+#include "GeoSketchLogger.h"
 
 namespace gs
 {
@@ -39,27 +40,31 @@ class TileManager
   
 public:
     TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize)
-        : _window{window}, _anchor{anchor}, _mapSize{mapsize}, _gridSize{gridsize}
+        : _window{window},
+          _anchor{anchor},
+          _mapSize{mapsize},
+          _gridSize{gridsize},
+          _logger{ log::initializeLogger("TileManager") }
     {
+        _logger->trace("Anchor: {},{}", anchor.x, anchor.y);
+        _logger->trace("MapSize: {},{}", mapsize.x, mapsize.y);
+        _logger->trace("GridSize: {},{}", gridsize.x, gridsize.y);
         const auto tileWidth = mapsize.x / gridsize.x;
         const auto tileHeight = mapsize.y / gridsize.y;
         const sf::Vector2f tileSize{ tileWidth, tileHeight };
-        std::size_t xidx = 0;
-        std::size_t yidx = 0;
-        for (auto x = _anchor.x; x < (_anchor.x + _mapSize.x); x += tileWidth)
+
+        for (auto xidx = 0u; xidx < gridsize.x; xidx++)
         {
             _tileContainer.push_back(std::vector<std::shared_ptr<Tile>>{});
+            float x = _anchor.x + (xidx * tileWidth);
             auto& back = _tileContainer.back();
-            yidx = 0;
-            for (auto y = _anchor.y; y < (_anchor.y + _mapSize.y); y += tileHeight)
+            for (auto yidx = 0u; yidx < gridsize.y; yidx++)
             {
+                float y = _anchor.y + (yidx * tileHeight);
                 const sf::Vector2 loc{x, y};
                 auto tile = std::make_shared<Tile>(loc, tileSize);
-                if ((xidx+yidx) % 2 == 0) tile->setColor(sf::Color(122,50,0));
                 back.push_back(tile);
-                yidx++;
             }
-            xidx++;
         }
     }
     
@@ -88,6 +93,8 @@ private:
     
     using TileContainer = std::vector<std::vector<std::shared_ptr<Tile>>>;
     TileContainer       _tileContainer;
+    
+    log::SpdLogPtr      _logger;
 };
 
 class GameScreen : public Screen

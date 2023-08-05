@@ -17,7 +17,7 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources)
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};
     
-    constexpr auto griddle = 7u;
+    constexpr auto griddle = 100u;
     sf::Vector2u gridsize{griddle, griddle};
     
     _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize);
