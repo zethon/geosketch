@@ -22,6 +22,12 @@ void MainMenuScreen::initGui()
     newgame->setTextSize(100);
     newgame->setSize(650, 250);
     newgame->setPosition(50,100);
+    newgame->onPress([=]
+    {
+        gs::AudioLocator::music()->stop(THEME_SONG);
+        _guiResult.type = gs::ActionType::CHANGE_SCREEN;
+        _guiResult.data = gs::SCREEN_GAME;
+    });
     _guicache.emplace("newgame", newgame);
     _gui->add(newgame);
     
@@ -51,7 +57,7 @@ void MainMenuScreen::initGui()
 PollResult MainMenuScreen::poll(const sf::Event& e)
 {
     Screen::poll(e);
-    if (_guiResult.type == gs::ActionType::EXIT_GAME)
+    if (_guiResult.type != gs::ActionType::NONE)
     {
         return _guiResult;
     }

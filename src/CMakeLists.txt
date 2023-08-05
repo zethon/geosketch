@@ -2,6 +2,7 @@ set(SOURCE_FILES
     main.cpp
     AudioService.cpp
     GameEngine.cpp
+    GameScreen.cpp
     GeoSketchLogger.cpp
     GSUtils.cpp
     MainMenuScreen.cpp
@@ -14,6 +15,7 @@ set(HEADER_FILES
     core.h
     AudioService.h
     GameEngine.h
+    GameScreen.h
     GeoSketchLogger.h
     GSUtils.h
     MainMenuScreen.h

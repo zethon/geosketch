@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
         ("version,v", "print version string")
         ("logfile,l", po::value<std::string>(), "path of logfile")
         ("loglevel", po::value<std::string>(), "trace,debug,info,warning,error,critical,off")
+        ("mute", po::bool_switch()->default_value(false), "mute all sounds")
+        ("screen,s", po::value<std::uint16_t>(), "start screen id")
         ;
 
     po::variables_map vm;
@@ -98,8 +100,11 @@ int main(int argc, char *argv[])
         const auto configLevel = spdlog::level::from_str(vm["loglevel"].as<std::string>());
         logger->set_level(configLevel);
     }
+    
     logger->info("Starting {} v{}",APP_NAME_LONG, VERSION);
     logger->info("built on {} for {}", BUILDTIMESTAMP, gs::getOsString());
+    
+    gs::GameSettings settings;
 
     std::string resourceFolder = gs::defaultResourceFolder();
     if (vm.count("resources") > 0)
@@ -116,11 +121,18 @@ int main(int argc, char *argv[])
         logger->critical("invalid resource folder: {}", resourceFolder);
         return 1;
     }
+    
+    if (vm.count("screen") > 0)
+    {
+        settings.startScreen = vm["screen"].as<std::uint16_t>();
+    }
+    
+    settings.muteAllSounds = vm["mute"].as<bool>();
 
     sf::RenderWindow win{sf::VideoMode(2560, 1440), APP_TITLE, sf::Style::Titlebar | sf::Style::Close};
     win.setFramerateLimit(60);
 
-    gs::GameEngine engine{ win, fs::path{resourceFolder} };
+    gs::GameEngine engine{ win, fs::path{resourceFolder}, settings };
 
     while (win.isOpen())
     {

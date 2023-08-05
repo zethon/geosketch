@@ -2,16 +2,18 @@
 #include "SplashScreen.h"
 #include "MainMenuScreen.h"
 #include "AudioService.h"
+#include "GameScreen.h"
 
 namespace gs
 {
 
-GameEngine::GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath)
+GameEngine::GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath, const GameSettings& settings)
     : _target{ target },
-      _resources{ respath }
+      _resources{ respath },
+      _settings{ settings }
 {
     initAudioService();
-    _currentScreen = std::make_shared<SplashScreen>(_target, _resources);
+    changeScreen(settings.startScreen);
 }
 
 void GameEngine::drawScreen()
@@ -48,6 +50,12 @@ PollResult GameEngine::poll(const sf::Event& e)
 
 void GameEngine::changeScreen(std::uint16_t screenId)
 {
+    if (_currentScreen)
+    {
+        _currentScreen->close();
+        _currentScreen.reset();
+    }
+    
     switch (screenId)
     {
         default:
@@ -55,28 +63,39 @@ void GameEngine::changeScreen(std::uint16_t screenId)
         break;
             
         case SCREEN_SPLASH:
-            _currentScreen->close();
-            _currentScreen.reset();
             _currentScreen = std::make_shared<SplashScreen>(_target, _resources);
         break;
             
         case SCREEN_MAINMENU:
-            _currentScreen->close();
-            _currentScreen.reset();
             _currentScreen = std::make_shared<MainMenuScreen>(_target, _resources);
+        break;
+            
+        case SCREEN_GAME:
+            _currentScreen = std::make_shared<GameScreen>(_target, _resources);
         break;
     }
 }
 
 void GameEngine::initAudioService()
 {
-    IAudioPtr musicptr = std::make_shared<gs::MusicAudio>(_resources);
-    musicptr = std::make_shared<gs::LoggedAudio>(musicptr);
-    musicptr->setAllVolume(100);
+    IAudioPtr musicptr;
+    IAudioPtr soundptr;
+    if (_settings.muteAllSounds)
+    {
+        musicptr = std::make_shared<gs::NullAudio>();
+        soundptr = std::make_shared<gs::NullAudio>();
+    }
+    else
+    {
+        musicptr = std::make_shared<gs::MusicAudio>(_resources);
+        musicptr->setAllVolume(100);
+        
+        soundptr = std::make_shared<gs::SfxAudio>(_resources);
+        soundptr->setAllVolume(100);
+    }
     
-    IAudioPtr soundptr = std::make_shared<gs::SfxAudio>(_resources);
+    musicptr = std::make_shared<gs::LoggedAudio>(musicptr);
     soundptr = std::make_shared<gs::LoggedAudio>(soundptr);
-    soundptr->setAllVolume(100);
     
     gs::AudioLocator::setMusic(musicptr);
     gs::AudioLocator::setSound(soundptr);

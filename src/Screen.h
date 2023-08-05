@@ -30,6 +30,14 @@ public:
     virtual void close();
     
     void addDrawable(DrawablePtr object);
+    
+    template <class DrawableT, typename... Args>
+    std::shared_ptr<DrawableT> emplaceDrawable(Args&&... args)
+    {
+        auto item = std::make_shared<DrawableT>(std::forward<Args>(args)...);
+        _drawables.push_back(item);
+        return item;
+    }
 
 protected:
     ResourceManager&            _resources;
