@@ -9,6 +9,7 @@ set(SOURCE_FILES
     ResourceManager.cpp
     Screen.cpp
     SplashScreen.cpp
+    TileManager.cpp
 )
 
 set(HEADER_FILES
@@ -23,6 +24,7 @@ set(HEADER_FILES
     ResourceManager.h
     Screen.h
     SplashScreen.h
+    TileManager.h
 )
 
 # if(WIN32)
