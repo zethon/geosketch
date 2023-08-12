@@ -16,7 +16,10 @@ public:
     PollResult poll(const sf::Event&) override;
     
 private:
+    void initGuit();
+    
     std::unique_ptr<TileManager>    _tiles;
+    sf::Texture                     _drawbtn_text;
 };
 
 } // namespace gs

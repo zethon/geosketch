@@ -93,14 +93,14 @@ void TileManager::event(const sf::Event& ev)
         case sf::Event::MouseButtonPressed:
         {
             _dragging = true;
-            if (ev.mouseButton.button == sf::Mouse::Left)
-            {
-                _selecting = true;
-            }
-            else
-            {
-                _selecting = false;
-            }
+//            if (ev.mouseButton.button == sf::Mouse::Left)
+//            {
+//                _selecting = true;
+//            }
+//            else
+//            {
+//                _selecting = false;
+//            }
         }
         break;
             
@@ -123,13 +123,8 @@ void TileManager::event(const sf::Event& ev)
                 return;
             }
             
-            const auto ptr = _tileContainer[local->x][local->y];
-//                if (_lastTile.get() == ptr.get())
-//                {
-//
-//                }
-            
-            if ( _lastTile.get() != ptr.get())
+            if (const auto ptr = _tileContainer[local->x][local->y];
+                    _lastTile.get() != ptr.get())
             {
                 if (_lastTile != nullptr)
                 {
@@ -149,6 +144,22 @@ void TileManager::event(const sf::Event& ev)
         }
         break;
     }
+}
+
+void TileManager::clear()
+{
+    for (auto& column : _tileContainer)
+    {
+        for (auto& row : column)
+        {
+            row->setSelected(false);
+        }
+    }
+}
+
+void TileManager::setSelecting(bool v)
+{
+    _selecting = v;
 }
 
 std::optional<sf::Vector2u> TileManager::getXYCords(const sf::Vector2i& mouseCord)

@@ -4,6 +4,7 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/spirit/home/x3.hpp>
 
 #include <fmt/core.h>
 
@@ -22,6 +23,7 @@
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
+namespace x3 = boost::spirit::x3;
 
 void initLogging(std::string_view logfile)
 {
@@ -128,16 +130,48 @@ int main(int argc, char *argv[])
     }
     
     settings.muteAllSounds = vm["mute"].as<bool>();
+    
+    std::optional<sf::Vector2u> winsize;
+    if (vm.count("window-size") > 0)
+    {
+        winsize.emplace();
+        std::string windowsize = vm["window-size"].as<std::string>();
 
-    sf::RenderWindow win{sf::VideoMode(2560, 1440), APP_TITLE, sf::Style::Titlebar | sf::Style::Close};
-    win.setFramerateLimit(60);
+        auto w = [&](auto& ctx) { winsize->x = _attr(ctx); };
+        auto h = [&](auto& ctx) { winsize->y = _attr(ctx); };
+        bool r = x3::phrase_parse(windowsize.begin(), windowsize.end(),
+            (
+                x3::int_[w] >> 'x' >> x3::int_[h]
+            ),
+            x3::space);
 
-    gs::GameEngine engine{ win, fs::path{resourceFolder}, settings };
+        if (!r || winsize->x < 480 || winsize->y < 320)
+        {
+            logger->critical("invalid screen size '{}'\n", windowsize);
+            return 1;
+        }
+    }
+    
+    std::unique_ptr<sf::RenderWindow> win;
+    if (winsize)
+    {
+        win = std::make_unique<sf::RenderWindow>(
+            sf::VideoMode(static_cast<unsigned int>(winsize->x), static_cast<unsigned int>(winsize->y)), APP_NAME_LONG, sf::Style::Titlebar | sf::Style::Close);
+    }
+    else
+    {
+        win = std::make_unique<sf::RenderWindow>(
+            sf::VideoMode::getDesktopMode(), APP_NAME_LONG, sf::Style::Fullscreen);
+    }
 
-    while (win.isOpen())
+    win->setFramerateLimit(60);
+
+    gs::GameEngine engine{ *win, fs::path{resourceFolder}, settings };
+
+    while (win->isOpen())
     {
         sf::Event e;
-        while (win.pollEvent(e))
+        while (win->pollEvent(e))
         {
             switch (e.type)
             {
@@ -146,14 +180,14 @@ int main(int argc, char *argv[])
                     const auto result = engine.poll(e);
                     if (result.type == gs::ActionType::EXIT_GAME)
                     {
-                        win.close();
+                        win->close();
                     }
                 }
                 break;
 
                 case sf::Event::EventType::Closed:
                 {
-                    win.close();
+                    win->close();
                 }
                 break;
             }
@@ -161,10 +195,11 @@ int main(int argc, char *argv[])
 
         engine.update();
 
-        win.clear();
+        win->clear();
         engine.drawScreen();
-        win.display();
+        win->display();
     }
  
+    win.release();
     return 0;
 }

@@ -16,7 +16,7 @@ class Tile : public sf::Drawable
 {
     const sf::Color DEFAULT{sf::Color::Transparent};
     const sf::Color HIGHLIGHT{sf::Color{150,150,150}};
-    const sf::Color SELECTED{sf::Color{0,100,0}};
+    const sf::Color SELECTED{sf::Color{200,200,200}};
     const sf::Color HISELECTED{sf::Color{100,100,50}};
     
 public:
@@ -60,6 +60,11 @@ public:
     
     void draw();
     void event(const sf::Event& ev);
+    
+    void clear();
+    void setSelecting(bool v);
+    
+    sf::Vector2f anchor() const { return _anchor; }
     
 private:
     std::optional<sf::Vector2u> getXYCords(const sf::Vector2i& mouseCord);
