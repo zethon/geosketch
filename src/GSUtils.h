@@ -29,8 +29,8 @@ namespace nl = nlohmann;
 namespace gs
 {
 
-bool validateResourceFolder(std::string_view folder);
-std::string defaultResourceFolder();
+bool validateResourceFolder(const boost::filesystem::path& folder);
+std::optional<std::string> defaultResourceFolder();
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const sf::Rect<T> item)

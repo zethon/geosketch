@@ -22,45 +22,37 @@
 
 #include <fmt/core.h>
 
+namespace fs = boost::filesystem;
+
 namespace gs
 {
 
-bool validateResourceFolder(std::string_view folder)
+bool validateResourceFolder(const fs::path& folder)
 {
     namespace fs = boost::filesystem;
     
-    if (folder.empty()) return false;
-    fs::path f{ folder.data() };
-    f = f / "images" / "splash.jpg";
-    return fs::exists(f);
+    if (!fs::exists(folder)) return false;
+    const auto f = folder / "images" / "splash.jpg";
+    return fs::exists(folder);
 }
 
-std::string defaultResourceFolder()
+std::optional<std::string> defaultResourceFolder()
 {
-    namespace fs = boost::filesystem;
-#ifdef _WINDOWS
-    return "resources";
-#elif defined(__APPLE__)
-    auto exepath = boost::dll::program_location().parent_path();
+    const auto exepath = boost::dll::program_location().parent_path();
     auto resfolder = exepath / "resources";
-    if (validateResourceFolder(resfolder.string()))
-    {
-        return resfolder.string();
-    }
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
 
     resfolder = exepath.parent_path() / "Resources";
-    if (validateResourceFolder(resfolder.string()))
-    {
-        return resfolder.string();
-    }
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
 
-    return {};
+    auto parent = exepath.parent_path();
+    resfolder = parent / "Resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
+
+    resfolder = parent / "resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
     
-#elif defined(__linux__)
-    return "linux";
-#else
-    return "unknown"
-#endif
+    return {};
 }
 
 void openBrowser(const std::string& url_str)

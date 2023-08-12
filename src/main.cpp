@@ -5,6 +5,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/spirit/home/x3.hpp>
+#include <boost/dll.hpp>
 
 #include <fmt/core.h>
 
@@ -108,22 +109,26 @@ int main(int argc, char *argv[])
     
     gs::GameSettings settings;
 
-    std::string resourceFolder = gs::defaultResourceFolder();
+    auto resourceFolder = gs::defaultResourceFolder(); // does validation
     if (vm.count("resources") > 0)
     {
         resourceFolder = vm["resources"].as<std::string>();
         
         // leading spaces can cause problems on macOS
-        boost::algorithm::trim(resourceFolder);
-    }
-    logger->debug("resource folder: {}", resourceFolder);
-
-    if (!gs::validateResourceFolder(resourceFolder))
-    {
-        logger->critical("invalid resource folder: {}", resourceFolder);
-        return 1;
+        boost::algorithm::trim(*resourceFolder);
+        if (!gs::validateResourceFolder(fs::path{*resourceFolder}))
+        {
+            resourceFolder.reset();
+        }
     }
     
+    if (!resourceFolder.has_value())
+    {
+        logger->critical("invalid resource folder: {}", *resourceFolder);
+        return 1;
+    }
+    logger->debug("resource folder: {}", *resourceFolder);
+
     if (vm.count("screen") > 0)
     {
         settings.startScreen = vm["screen"].as<std::uint16_t>();
@@ -166,7 +171,7 @@ int main(int argc, char *argv[])
 
     win->setFramerateLimit(60);
 
-    gs::GameEngine engine{ *win, fs::path{resourceFolder}, settings };
+    gs::GameEngine engine{ *win, fs::path{*resourceFolder}, settings };
 
     while (win->isOpen())
     {
