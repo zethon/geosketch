@@ -4,12 +4,12 @@ set(SOURCE_FILES
     GameEngine.cpp
     GameScreen.cpp
     GeoSketchLogger.cpp
-    GSUtils.cpp
     MainMenuScreen.cpp
     ResourceManager.cpp
     Screen.cpp
     SplashScreen.cpp
     TileManager.cpp
+    OSUtils.cpp
 )
 
 set(HEADER_FILES
@@ -18,8 +18,8 @@ set(HEADER_FILES
     GameEngine.h
     GameScreen.h
     GeoSketchLogger.h
-    GSUtils.h
     MainMenuScreen.h
+    OSUtils.h
     PollResult.h
     ResourceManager.h
     Screen.h

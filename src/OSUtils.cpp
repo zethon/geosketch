@@ -13,47 +13,12 @@
 #ifdef __APPLE__
 #   include <CoreFoundation/CFBundle.h>
 #   include <ApplicationServices/ApplicationServices.h>
-#   include <boost/dll.hpp>
 #endif
 
-#include "GSUtils.h"
+#include "OSUtils.h"
 
-#include <boost/filesystem.hpp>
-
-#include <fmt/core.h>
-
-namespace fs = boost::filesystem;
-
-namespace gs
+namespace lz
 {
-
-bool validateResourceFolder(const fs::path& folder)
-{
-    namespace fs = boost::filesystem;
-    
-    if (!fs::exists(folder)) return false;
-    const auto f = folder / "images" / "splash.jpg";
-    return fs::exists(folder);
-}
-
-std::optional<std::string> defaultResourceFolder()
-{
-    const auto exepath = boost::dll::program_location().parent_path();
-    auto resfolder = exepath / "resources";
-    if (validateResourceFolder(resfolder.string())) return resfolder.string();
-
-    resfolder = exepath.parent_path() / "Resources";
-    if (validateResourceFolder(resfolder.string())) return resfolder.string();
-
-    auto parent = exepath.parent_path();
-    resfolder = parent / "Resources";
-    if (validateResourceFolder(resfolder.string())) return resfolder.string();
-
-    resfolder = parent / "resources";
-    if (validateResourceFolder(resfolder.string())) return resfolder.string();
-    
-    return {};
-}
 
 void openBrowser(const std::string& url_str)
 {
@@ -95,7 +60,7 @@ std::string getOsString()
 {
 #ifdef _WINDOWS
     return "windows";
-#elif defined(__APPLE__)    
+#elif defined(__APPLE__)
     return "macos";
 #elif defined(__linux__)
     return "linux";
@@ -163,4 +128,4 @@ std::string getDataFolder()
     return retval;
 }
 
-} // namespace tt
+} // namespace lz

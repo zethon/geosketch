@@ -20,11 +20,39 @@
 #include "GeoSketchLogger.h"
 #include "GameEngine.h"
 #include "PollResult.h"
-#include "GSUtils.h"
+#include "OSUtils.h"
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 namespace x3 = boost::spirit::x3;
+
+bool validateResourceFolder(const fs::path& folder)
+{
+    namespace fs = boost::filesystem;
+    
+    if (!fs::exists(folder)) return false;
+    const auto f = folder / "images" / "splash.jpg";
+    return fs::exists(folder);
+}
+
+std::optional<std::string> defaultResourceFolder()
+{
+    const auto exepath = boost::dll::program_location().parent_path();
+    auto resfolder = exepath / "resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
+
+    resfolder = exepath.parent_path() / "Resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
+
+    auto parent = exepath.parent_path();
+    resfolder = parent / "Resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
+
+    resfolder = parent / "resources";
+    if (validateResourceFolder(resfolder.string())) return resfolder.string();
+    
+    return {};
+}
 
 void initLogging(std::string_view logfile)
 {
@@ -105,18 +133,18 @@ int main(int argc, char *argv[])
     }
     
     logger->info("Starting {} v{}",APP_NAME_LONG, VERSION);
-    logger->info("built on {} for {}", BUILDTIMESTAMP, gs::getOsString());
+    logger->info("built on {} for {}", BUILDTIMESTAMP, lz::getOsString());
     
     gs::GameSettings settings;
 
-    auto resourceFolder = gs::defaultResourceFolder(); // does validation
+    auto resourceFolder = defaultResourceFolder(); // does validation
     if (vm.count("resources") > 0)
     {
         resourceFolder = vm["resources"].as<std::string>();
         
         // leading spaces can cause problems on macOS
         boost::algorithm::trim(*resourceFolder);
-        if (!gs::validateResourceFolder(fs::path{*resourceFolder}))
+        if (!validateResourceFolder(fs::path{*resourceFolder}))
         {
             resourceFolder.reset();
         }
