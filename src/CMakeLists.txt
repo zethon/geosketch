@@ -7,6 +7,7 @@ set(SOURCE_FILES
     MainMenuScreen.cpp
     ResourceManager.cpp
     Screen.cpp
+    SFMLUtils.cpp
     SplashScreen.cpp
     TileManager.cpp
     OSUtils.cpp
@@ -23,6 +24,7 @@ set(HEADER_FILES
     PollResult.h
     ResourceManager.h
     Screen.h
+    SFMLUtils.h
     SplashScreen.h
     TileManager.h
 )
