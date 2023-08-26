@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project(GeoSketch)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MACOSX_RPATH 1)
 
 # optional configuration
@@ -56,10 +56,11 @@ if (MSVC)
         -DNOMINMAX
         -D_SCL_SECURE_NO_WARNINGS
         -DWIN32_LEAN_AND_MEAN
+        -D_HAS_ITERATOR_DEBUGGING=0
 
-        # use this to supress the boost generated "warning C4996"
-        # on Windows
+        # Windows "warning C4996" deprecation warnings
         -D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING
+        -D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
     )
 
     add_compile_options(

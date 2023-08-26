@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <optional>
 
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/trim.hpp>

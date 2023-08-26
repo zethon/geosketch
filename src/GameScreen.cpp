@@ -10,9 +10,9 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources)
     const auto winwidth = winsize.x;
     const auto winheight = winsize.y;
 
-    const float edgelen = (winwidth > winheight ? winheight : winwidth) * 0.925;
-    const float xloc = (winwidth - (edgelen + (edgelen * 0.05)));
-    const float yloc = (winheight / 2) - (edgelen / 2);
+    const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
+    const auto xloc = (winwidth - (edgelen + (edgelen * 0.05f)));
+    const auto yloc = (winheight / 2.f) - (edgelen / 2.f);
     
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};

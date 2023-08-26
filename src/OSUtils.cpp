@@ -3,6 +3,7 @@
 #   include <shellapi.h>
 #   include <Shlobj.h>
 #   include <codecvt>
+#   include <sstream>
 #else
 #   include <unistd.h>
 #   include <sys/types.h>

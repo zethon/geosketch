@@ -1,4 +1,7 @@
 #pragma once
+
+#include <optional>
+
 #include <boost/filesystem.hpp>
 
 #include <SFML/Graphics.hpp>
@@ -17,8 +20,8 @@ public:
     
     std::string getFilename(const std::string& name);
     
-    sf::Texture& cacheTexture(const std::string& name);
-    sf::Texture& getTexture(const std::string& name);
+    // sf::Texture& cacheTexture(const std::string& name);
+    // sf::Texture& getTexture(const std::string& name);
     
     sf::SoundBuffer* cacheSound(const std::string& name);
     sf::SoundBuffer* getSound(const std::string& name);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include <boost/any.hpp>
 
 #include <SFML/Graphics.hpp>

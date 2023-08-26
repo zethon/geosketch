@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Screen.h"
 #include "TileManager.h"
 

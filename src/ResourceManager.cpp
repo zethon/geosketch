@@ -15,13 +15,15 @@ std::string ResourceManager::getFilename(const std::string& name)
 }
 
 
-sf::Texture& ResourceManager::cacheTexture(const std::string& name)
-{
-}
+// sf::Texture& ResourceManager::cacheTexture(const std::string& name)
+// {
+//     return {};
+// }
 
-sf::Texture& ResourceManager::getTexture(const std::string& name)
-{
-}
+// sf::Texture& ResourceManager::getTexture(const std::string& name)
+// {
+//     return {};
+// }
 
 sf::SoundBuffer* ResourceManager::cacheSound(const std::string & name)
 {
