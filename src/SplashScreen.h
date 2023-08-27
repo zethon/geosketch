@@ -1,3 +1,5 @@
+#include "GeoSketchLogger.h"
+
 #include "Screen.h"
 
 namespace gs
@@ -18,6 +20,7 @@ private:
     sf::Texture _bg;
     sf::Font    _font;
 
+    log::SpdLogPtr  _logger;
 };
 
 } // namespace gs

@@ -8,28 +8,28 @@ set(CMAKE_MACOSX_RPATH 1)
 option(BUILD_UNIT_TESTS "Build unit tests (default OFF)" OFF)
 option(SHARED_SFML "Use shared SFML libraries (default OFF)" ON)
 
-# initialize conan libs
-include(CMake/conan.cmake)
-conan_cmake_run(REQUIRES
-    boost/1.77.0
-    ogg/1.3.5
-    sfml/2.5.1
-    spdlog/1.9.2
-    nlohmann_json/3.10.5
-    zlib/1.2.12
-    BASIC_SETUP CMAKE_TARGETS
-    GENERATORS cmake_find_package cmake_paths
-    BUILD missing
-    OPTIONS 
-        boost:shared=False 
-        boost:without_test=False 
-        boost:without_program_options=False 
-        boost:without_filesystem=False 
-        boost:without_system=False 
-        boost:without_exception=False
-        boost:without_contract=False
-        sfml:shared=True
-)
+# # initialize conan libs
+# include(CMake/conan.cmake)
+# conan_cmake_run(REQUIRES
+#     boost/1.77.0
+#     ogg/1.3.5
+#     sfml/2.5.1
+#     spdlog/1.9.2
+#     nlohmann_json/3.10.5
+#     zlib/1.2.12
+#     BASIC_SETUP CMAKE_TARGETS
+#     GENERATORS cmake_find_package cmake_paths
+#     BUILD missing
+#     OPTIONS 
+#         boost:shared=False 
+#         boost:without_test=False 
+#         boost:without_program_options=False 
+#         boost:without_filesystem=False 
+#         boost:without_system=False 
+#         boost:without_exception=False
+#         boost:without_contract=False
+#         sfml:shared=True
+# )
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(NO_OUTPUT_DIRS KEEP_RPATHS)
@@ -60,7 +60,7 @@ if (MSVC)
 
         # Windows "warning C4996" deprecation warnings
         -D_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING
-        -D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+        -D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
     )
 
     add_compile_options(
