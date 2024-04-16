@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     
     if (!resourceFolder.has_value())
     {
-        logger->critical("invalid resource folder: {}", *resourceFolder);
+        logger->critical("invalid resource folder: no resource folder specified");
         return 1;
     }
     logger->debug("resource folder: {}", *resourceFolder);
