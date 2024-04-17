@@ -1,3 +1,5 @@
+#include "SFMLUtils.h"
+
 #include "TileManager.h"
 
 namespace gs
@@ -123,8 +125,7 @@ void TileManager::event(const sf::Event& ev)
                 return;
             }
             
-            if (const auto ptr = _tileContainer[local->x][local->y];
-                    _lastTile.get() != ptr.get())
+            if (const auto ptr = _tileContainer[local->x][local->y]; _lastTile.get() != ptr.get())
             {
                 if (_lastTile != nullptr)
                 {
@@ -133,10 +134,24 @@ void TileManager::event(const sf::Event& ev)
 
                 if (_dragging)
                 {
-                    _tileContainer[local->x][local->y]->setSelected(_selecting);
+                    if (!_lastTile) return;
+                    ptr->setSelected(_selecting);
+                    const auto fx = *local;
+                    const auto gx = sf::Vector2u{
+                        static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
+                        static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
+                    
+                    if(!utils::sfml::AreAdjacent(fx, gx))
+                    {
+                        const auto others = utils::sfml::GetIntersected(fx, gx);
+                        for (const auto& ot : others)
+                        {
+                            _tileContainer[ot.x][ot.y]->setSelected(_selecting);
+                        }
+                    }
                 }
                 
-                _tileContainer[local->x][local->y]->setHovered(true);
+                ptr->setHovered(true);
                 _lastTile = _tileContainer[local->x][local->y];
                 //_logger->trace("mouse: {}, {}", ev.mouseMove.x, ev.mouseMove.y);
                 //_logger->trace("tile: {},{}", local->x, local->y);

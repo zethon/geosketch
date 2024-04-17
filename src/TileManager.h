@@ -42,6 +42,11 @@ public:
         target.draw(_rect, states);
     }
     
+    sf::Vector2f position() const
+    {
+        return _rect.getPosition();
+    }
+    
 private:
     void resetColor();
     
@@ -68,11 +73,6 @@ public:
     
 private:
     std::optional<sf::Vector2u> getXYCords(const sf::Vector2i& mouseCord);
-    
-    sf::Vector2u getCurrentTile()
-    {
-        sf::Mouse::getPosition();
-    }
     
     sf::RenderTarget&   _window;
 
