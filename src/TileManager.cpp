@@ -138,8 +138,8 @@ void TileManager::event(const sf::Event& ev)
                 
                 _tileContainer[local->x][local->y]->setHovered(true);
                 _lastTile = _tileContainer[local->x][local->y];
-                _logger->trace("mouse: {}, {}", ev.mouseMove.x, ev.mouseMove.y);
-                _logger->trace("tile: {},{}", local->x, local->y);
+                //_logger->trace("mouse: {}, {}", ev.mouseMove.x, ev.mouseMove.y);
+                //_logger->trace("tile: {},{}", local->x, local->y);
             }
         }
         break;

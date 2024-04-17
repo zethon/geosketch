@@ -3,6 +3,7 @@
 #include "MainMenuScreen.h"
 #include "AudioService.h"
 #include "GameScreen.h"
+#include "SettingsScreen.h"
 
 namespace gs
 {
@@ -72,6 +73,10 @@ void GameEngine::changeScreen(std::uint16_t screenId)
             
         case SCREEN_GAME:
             _currentScreen = std::make_shared<GameScreen>(_target, _resources);
+        break;
+
+        case SCREEN_SETTINGS:
+            _currentScreen = std::make_shared<SettingsScreen>(_target, _resources);
         break;
     }
 }

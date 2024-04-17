@@ -37,6 +37,12 @@ void MainMenuScreen::initGui()
     settings->setTextSize(100);
     settings->setSize(650, 250);
     settings->setPosition(50,400);
+    settings->onPress([=]
+    {
+        gs::AudioLocator::music()->stop(THEME_SONG);
+        _guiResult.type = gs::ActionType::CHANGE_SCREEN;
+        _guiResult.data = gs::SCREEN_SETTINGS;
+    });
     _guicache.emplace("settings", settings);
     _gui->add(settings);
     
