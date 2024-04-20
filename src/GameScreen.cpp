@@ -3,8 +3,10 @@
 namespace gs
 {
 
-GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources)
-    : Screen(target, resources)
+GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, const NewGameSettings& settings)
+    : Screen(target, resources), 
+      _settings{settings}, 
+      _logger{ log::initializeLogger("GameScreen") }
 {
     const auto winsize = _target.getSize();
     const auto winwidth = winsize.x;
@@ -31,6 +33,8 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources)
     this->initGuit();
     
     this->_tiles->setSelecting(true);
+
+    _logger->info("Game mode: {}", settings.level == NewGameSettings::Level::EASY ? "Easy" : settings.level == NewGameSettings::Level::MEDIUM ? "Medium" : "Hard");
 }
 
 void GameScreen::initGuit()

@@ -4,6 +4,7 @@
 #include "AudioService.h"
 #include "GameSelectScreen.h"
 #include "SettingsScreen.h"
+#include "GameScreen.h"
 
 namespace gs
 {
@@ -41,6 +42,11 @@ PollResult GameEngine::poll(const sf::Event& e)
     {
         changeScreen(boost::any_cast<std::uint16_t>(result.data));
     }
+    else if (result.type == ActionType::NEW_GAME)
+    {
+        const auto newGameSettings = boost::any_cast<NewGameSettings>(result.data);
+        changeScreen(SCREEN_GAME, newGameSettings);
+    }
     else if (result.type == ActionType::EXIT_GAME)
     {
         return result;
@@ -49,7 +55,7 @@ PollResult GameEngine::poll(const sf::Event& e)
     return {};
 }
 
-void GameEngine::changeScreen(std::uint16_t screenId)
+void GameEngine::changeScreen(std::uint16_t screenId, const NewGameSettings& settings)
 {
     if (_currentScreen)
     {
@@ -77,6 +83,10 @@ void GameEngine::changeScreen(std::uint16_t screenId)
 
         case SCREEN_SETTINGS:
             _currentScreen = std::make_shared<SettingsScreen>(_target, _resources);
+        break;
+
+        case SCREEN_GAME:
+            _currentScreen = std::make_shared<GameScreen>(_target, _resources, settings);
         break;
     }
 }

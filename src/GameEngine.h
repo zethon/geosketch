@@ -45,7 +45,7 @@ public:
 
 private:
     void initAudioService();
-    void changeScreen(std::uint16_t screenId);
+    void changeScreen(std::uint16_t screenId, const NewGameSettings& settings = {});
     
     sf::RenderTarget&   _target;
     ScreenPtr           _currentScreen;

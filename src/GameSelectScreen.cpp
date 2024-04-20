@@ -1,5 +1,6 @@
 #include "GameSelectScreen.h"
 #include "AudioService.h"
+#include "GameEngine.h"
 
 namespace gs
 {
@@ -10,7 +11,7 @@ GameSelectScreen::GameSelectScreen(sf::RenderTarget& target, ResourceManager& re
     : Screen{ target, resources },
     _logger{ log::initializeLogger("GameSelectScreen") }
 {
-
+    initGui();
 }
 
 void GameSelectScreen::initGui()
@@ -22,8 +23,8 @@ void GameSelectScreen::initGui()
     easy->setPosition(50,100);
     easy->onPress([=]
     {
-        _guiResult.type = gs::ActionType::CHANGE_SCREEN;
-        _guiResult.data = gs::SCREEN_SETTINGS;
+        _guiResult.type = gs::ActionType::NEW_GAME;
+        _guiResult.data = gs::NewGameSettings{ gs::NewGameSettings::Level::EASY };
     });
     _guicache.emplace("easybutton", easy);
     _gui->add(easy);
@@ -36,8 +37,8 @@ void GameSelectScreen::initGui()
     medium->setPosition(50,400);
     medium->onPress([=]
     {
-        _guiResult.type = gs::ActionType::CHANGE_SCREEN;
-        _guiResult.data = gs::SCREEN_GAME;
+        _guiResult.type = gs::ActionType::NEW_GAME;
+        _guiResult.data = gs::NewGameSettings{ gs::NewGameSettings::Level::MEDIUM };
     });
     _guicache.emplace("mediumbutton", medium);
     _gui->add(medium);
@@ -50,7 +51,7 @@ void GameSelectScreen::initGui()
     hard->onPress([=]
     {
         _guiResult.type = gs::ActionType::NEW_GAME;
-        _guiResult.data = gs::SCREEN_SETTINGS;
+        _guiResult.data = gs::NewGameSettings{ gs::NewGameSettings::Level::HARD };
     });
     _guicache.emplace("hardbutton", hard);
     _gui->add(hard);
