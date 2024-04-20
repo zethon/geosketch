@@ -19,7 +19,22 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};
     
-    constexpr auto griddle = 100;
+    std::uint32_t griddle = 0;
+    switch (settings.level)
+    {
+        default:
+            griddle = 50;
+        break;
+
+        case NewGameSettings::Level::MEDIUM:
+            griddle = 75;
+        break;
+
+        case NewGameSettings::Level::HARD:
+            griddle = 100;
+        break;
+    }
+    
     sf::Vector2u gridsize{griddle, griddle};
     
     _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize);
