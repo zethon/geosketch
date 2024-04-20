@@ -17,6 +17,7 @@ public:
     
     void draw() override;
     PollResult poll(const sf::Event&) override;
+    PollResult update() override;
     
 private:
     void initGuit();

@@ -100,8 +100,32 @@ PollResult GameScreen::poll(const sf::Event& e)
     {
         return result;
     }
-    
+
+    if (e.type == sf::Event::KeyPressed)
+    {
+        switch (e.key.code)
+        {
+            default:
+            break;
+
+            case sf::Keyboard::Escape:
+            {
+                gs::PollResult result;
+                result.type = gs::ActionType::CHANGE_SCREEN;
+                result.data = SCREEN_MAINMENU;
+                return result;
+            }
+            break;
+        }
+    }
+
     _tiles->event(e);
+    return {};
+}
+
+PollResult GameScreen::update()
+{
+    Screen::update();
     return {};
 }
 
