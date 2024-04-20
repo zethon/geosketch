@@ -20,6 +20,17 @@ struct GameSettings
     std::uint16_t startScreen = SCREEN_SPLASH;
 };
 
+struct NewGameSettings
+{
+    enum class Level : std::uint16_t
+    {
+        EASY = 1,
+        MEDIUM = 2,
+        HARD = 3
+    };
+
+    Level level = Level::EASY;
+};
 
 class GameEngine
 {

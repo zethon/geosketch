@@ -26,7 +26,7 @@ void MainMenuScreen::initGui()
     {
         gs::AudioLocator::music()->stop(THEME_SONG);
         _guiResult.type = gs::ActionType::CHANGE_SCREEN;
-        _guiResult.data = gs::SCREEN_GAME;
+        _guiResult.data = gs::SCREEN_GAMESELECT;
     });
     _guicache.emplace("newgame", newgame);
     _gui->add(newgame);

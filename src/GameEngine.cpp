@@ -2,7 +2,7 @@
 #include "SplashScreen.h"
 #include "MainMenuScreen.h"
 #include "AudioService.h"
-#include "GameScreen.h"
+#include "GameSelectScreen.h"
 #include "SettingsScreen.h"
 
 namespace gs
@@ -71,8 +71,8 @@ void GameEngine::changeScreen(std::uint16_t screenId)
             _currentScreen = std::make_shared<MainMenuScreen>(_target, _resources);
         break;
             
-        case SCREEN_GAME:
-            _currentScreen = std::make_shared<GameScreen>(_target, _resources);
+        case SCREEN_GAMESELECT:
+            _currentScreen = std::make_shared<GameSelectScreen>(_target, _resources);
         break;
 
         case SCREEN_SETTINGS:
