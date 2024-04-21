@@ -1,0 +1,8 @@
+################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/build
+/build-new
+/build2
+tools/penv

@@ -1,8 +1,36 @@
 set(SOURCE_FILES
     main.cpp
+    AudioService.cpp
+    GameEngine.cpp
+    GameScreen.cpp
+    GameSelectScreen.cpp
+    GeoSketchLogger.cpp
+    MainMenuScreen.cpp
+    ResourceManager.cpp
+    Screen.cpp
+    SettingsScreen.cpp
+    SFMLUtils.cpp
+    SplashScreen.cpp
+    TileManager.cpp
+    OSUtils.cpp
 )
 
 set(HEADER_FILES
+    core.h
+    AudioService.h
+    GameEngine.h
+    GameScreen.h
+    GameSelectScreen.h
+    GeoSketchLogger.h
+    MainMenuScreen.h
+    OSUtils.h
+    PollResult.h
+    ResourceManager.h
+    Screen.h
+    SettingsScreen.h
+    SFMLUtils.h
+    SplashScreen.h
+    TileManager.h
 )
 
 # if(WIN32)
@@ -26,14 +54,14 @@ SET_SOURCE_FILES_PROPERTIES(
         MACOSX_PACKAGE_LOCATION Resources
 )
 
-add_executable(geosketch ${GUI_TYPE}
+add_executable(GeoSketch ${GUI_TYPE}
     ${SOURCE_FILES}
     ${HEADER_FILES}
     ${RESOURCE_FILES}
 )
 
 
-target_link_libraries(geosketch
+target_link_libraries(GeoSketch
     PUBLIC
         ${CONAN_LIBS}
         ${SFML_Libraries}
@@ -44,12 +72,12 @@ target_link_libraries(geosketch
         tgui
 )
 
-target_link_directories(geosketch
+target_link_directories(GeoSketch
 PUBLIC 
     ${CONAN_LIB_DIRS}
 )
 
-target_include_directories(geosketch
+target_include_directories(GeoSketch
 PUBLIC 
     ${CONAN_INCLUDE_DIRS}
 )
