@@ -46,7 +46,6 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     outline->setOutlineColor(sf::Color(122, 122, 122));
     
     this->initGuit();
-    
     this->_tiles->setSelecting(true);
 
     _logger->info("Game mode: {}", settings.level == NewGameSettings::Level::EASY ? "Easy" : settings.level == NewGameSettings::Level::MEDIUM ? "Medium" : "Hard");
@@ -91,6 +90,14 @@ void GameScreen::initGuit()
         this->_tiles->setSelecting(true);
     });
     _gui->add(clearbtn);
+
+    _timer = tgui::Label::create();
+    _timer->setWidgetName("timerlbl");
+    _timer->setPosition(1, 1);
+    _timer->setTextSize(124);
+    _timer->setText("00:00.00");
+    _timer->getRenderer()->setTextColor(sf::Color::White);
+    _gui->add(_timer);
 }
 
 PollResult GameScreen::poll(const sf::Event& e)
@@ -116,6 +123,20 @@ PollResult GameScreen::poll(const sf::Event& e)
                 return result;
             }
             break;
+
+            case sf::Keyboard::Space:
+            {
+                if (_timeron)
+                {
+                    _timeron = false;
+                }
+                else
+                {
+                    _timeron = true;
+                    _start = std::chrono::steady_clock::now();
+                }
+            }
+            break;
         }
     }
 
@@ -126,6 +147,15 @@ PollResult GameScreen::poll(const sf::Event& e)
 PollResult GameScreen::update()
 {
     Screen::update();
+
+    if (_timeron)
+    {
+        const auto timespace = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _start);
+        const auto minutes = timespace.count() / 60000;
+        const auto seconds = (timespace.count() % 60000) / 1000;
+        const auto tenths = (timespace.count() % 1000) / 10;
+        _timer->setText(fmt::format("{:02d}:{:02d}.{}", minutes, seconds, tenths));
+    }
     return {};
 }
 
