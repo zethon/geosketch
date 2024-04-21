@@ -29,7 +29,14 @@ struct NewGameSettings
         HARD = 3
     };
 
+    enum class GameType : std::uint16_t
+    {
+        FREE = 1,
+        TIMED = 2
+    };
+
     Level level = Level::EASY;
+    GameType gameType = GameType::FREE;
 };
 
 class GameEngine

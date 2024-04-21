@@ -1,6 +1,6 @@
 #include "GeoSketchLogger.h"
-
 #include "Screen.h"
+#include "GameEngine.h"
 
 namespace gs
 {
@@ -17,6 +17,7 @@ public:
 
 private:
     void initGui();
+    NewGameSettings getNewGameSettings() const;
 
     sf::Clock   _clock;
     sf::Texture _bg;
