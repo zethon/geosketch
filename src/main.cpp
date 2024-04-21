@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     desc.add_options()
         ("help,?", "print help message")
         ("resources,r", po::value<std::string>(), "path of resource folder")
-        ("data-dir,d", po::value<std::string>(), "path of data folder"
+        ("data-dir,d", po::value<std::string>(), "path of data folder")
         ("window-size,w", po::value<std::string>(), "window size")
         ("version,v", "print version string")
         ("logfile,l", po::value<std::string>(), "path of logfile")
@@ -183,24 +183,24 @@ int main(int argc, char *argv[])
     }
     logger->debug("resource folder: {}", *resourceFolder);
 
-    auto dataFolder = defaultDataFolder(); // does validation
-    if (vm.count("data-dir") > 0)
-    {
-        dataFolder = vm["data-dir"].as<std::string>();
-        
-        // leading spaces can cause problems on macOS
-        boost::algorithm::trim(*dataFolder);
-        if (!validateDataFolder(fs::path{*dataFolder}))
-        {
-            dataFolder.reset();
-        }
-    }
+    //auto dataFolder = defaultDataFolder(); // does validation
+    //if (vm.count("data-dir") > 0)
+    //{
+    //    dataFolder = vm["data-dir"].as<std::string>();
+    //    
+    //    // leading spaces can cause problems on macOS
+    //    boost::algorithm::trim(*dataFolder);
+    //    if (!validateDataFolder(fs::path{*dataFolder}))
+    //    {
+    //        dataFolder.reset();
+    //    }
+    //}
 
-    if (!dataFolder.has_value())
-    {
-        logger->critical("invalid data folder: no data folder specified");
-        return 1;
-    }
+    //if (!dataFolder.has_value())
+    //{
+    //    logger->critical("invalid data folder: no data folder specified");
+    //    return 1;
+    //}
 
     if (vm.count("screen") > 0)
     {
