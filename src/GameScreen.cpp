@@ -20,6 +20,7 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     sf::Vector2f mapsize{edgelen, edgelen};
     
     std::uint32_t griddle = 0;
+    auto outlineSize = 0.5f;
     switch (settings.difficulty)
     {
         default:
@@ -33,11 +34,16 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
         case NewGameSettings::Difficulty::HARD:
             griddle = 100;
         break;
+
+        case NewGameSettings::Difficulty::EXPERT:
+            griddle = 100;
+            outlineSize = 0.0f;
+        break;
     }
     
     sf::Vector2u gridsize{griddle, griddle};
     
-    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize);
+    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize, outlineSize);
     auto outline = this->emplaceDrawable<sf::RectangleShape>(
         sf::Vector2f{static_cast<std::float_t>(edgelen), static_cast<std::float_t>(edgelen)});
     outline->setPosition(xloc, yloc);

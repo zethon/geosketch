@@ -5,14 +5,14 @@
 namespace gs
 {
 
-Tile::Tile(const sf::Vector2f& location, const sf::Vector2f& size)
+Tile::Tile(const sf::Vector2f& location, const sf::Vector2f& size, float outlineThickness)
     : _color{sf::Color::Transparent}
 {
     _rect.setPosition(location.x, location.y);
     _rect.setSize(size);
     _rect.setFillColor(_color);
     _rect.setOutlineColor(sf::Color(122, 122, 122));
-    _rect.setOutlineThickness(0.5f);
+    _rect.setOutlineThickness(outlineThickness);
 }
 
 void Tile::resetColor()
@@ -41,7 +41,7 @@ void Tile::resetColor()
     }
 }
 
-TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize)
+TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize, float outlineSize)
     : _window{window},
       _anchor{anchor},
       _mapSize{mapsize},
@@ -68,7 +68,7 @@ TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, c
         {
             float y = _anchor.y + (yidx * _tileHeight);
             const sf::Vector2 loc{x, y};
-            auto tile = std::make_shared<Tile>(loc, tileSize);
+            auto tile = std::make_shared<Tile>(loc, tileSize, outlineSize);
             back.push_back(tile);
         }
     }

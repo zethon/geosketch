@@ -21,7 +21,7 @@ class Tile : public sf::Drawable
     
 public:
     
-    Tile(const sf::Vector2f& location, const sf::Vector2f& size);
+    Tile(const sf::Vector2f& location, const sf::Vector2f& size, float outlineThickness);
     
     bool selected() const { return _selected; }
     void setSelected(bool v)
@@ -61,7 +61,7 @@ class TileManager
 {
   
 public:
-    TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize);
+    TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize, float outlineSize);
     
     void draw();
     void event(const sf::Event& ev);
