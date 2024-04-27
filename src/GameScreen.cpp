@@ -20,17 +20,17 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     sf::Vector2f mapsize{edgelen, edgelen};
     
     std::uint32_t griddle = 0;
-    switch (settings.level)
+    switch (settings.difficulty)
     {
         default:
             griddle = 50;
         break;
 
-        case NewGameSettings::Level::MEDIUM:
+        case NewGameSettings::Difficulty::MEDIUM:
             griddle = 75;
         break;
 
-        case NewGameSettings::Level::HARD:
+        case NewGameSettings::Difficulty::HARD:
             griddle = 100;
         break;
     }
@@ -48,7 +48,9 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     this->initGuit();
     this->_tiles->setSelecting(true);
 
-    _logger->info("Game mode: {}", settings.level == NewGameSettings::Level::EASY ? "Easy" : settings.level == NewGameSettings::Level::MEDIUM ? "Medium" : "Hard");
+    std::stringstream ss;
+    ss << "GameScreen initialized with settings: " << settings;
+    _logger->debug(ss.str());
 }
 
 void GameScreen::initGuit()
