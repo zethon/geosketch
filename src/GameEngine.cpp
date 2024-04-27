@@ -41,6 +41,10 @@ std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings::GameType &
         case gs::NewGameSettings::GameType::TIMED:
             os << "Timed";
         break;
+
+        case gs::NewGameSettings::GameType::COUNTDOWN:
+            os << "Countdown";
+        break;
     }
     
     return os;

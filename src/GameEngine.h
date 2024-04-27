@@ -33,7 +33,8 @@ struct NewGameSettings
     enum class GameType : std::uint16_t
     {
         FREE = 1,
-        TIMED = 2
+        TIMED = 2,
+        COUNTDOWN = 3
     };
 
     Difficulty difficulty = Difficulty::EASY;

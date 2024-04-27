@@ -41,7 +41,7 @@ void GameSelectScreen::initGui()
     hardbtn->setTextSize(48);
     hardbtn->setSize(100, 48);
     hardbtn->setPosition({"10%", "30%"});
-    hardbtn->onClick([&]{ this->_difficulty = NewGameSettings::Difficulty::MEDIUM; });
+    hardbtn->onClick([&]{ this->_difficulty = NewGameSettings::Difficulty::HARD; });
     _gui->add(hardbtn);
 
     auto expertbtn = tgui::RadioButton::create();
@@ -55,11 +55,13 @@ void GameSelectScreen::initGui()
 
     auto combobox = tgui::ComboBox::create();
     combobox->setWidgetName("combobox");
-    combobox->setSize(360, 64);
-    combobox->setTextSize(60);
+    combobox->setSize(480, 64);
+    combobox->setTextSize(36);
     combobox->setPosition({ "50%", "10%" });
+    // see: https://github.com/zethon/geosketch/wiki
     combobox->addItem("Free Mode");
     combobox->addItem("Timed Mode");
+    combobox->addItem("Countdown Mode");
     combobox->setSelectedItemByIndex(0);
     _gui->add(combobox);
 
@@ -94,13 +96,17 @@ NewGameSettings GameSelectScreen::getNewGameSettings() const
     settings.difficulty = _difficulty;
 
     auto combobox = _gui->get<tgui::ComboBox>("combobox");
-    if (combobox->getSelectedItemIndex() == 0)
+    switch (combobox->getSelectedItemIndex())
     {
-        settings.gameType = NewGameSettings::GameType::FREE;
-    }
-    else
-    {
-        settings.gameType = NewGameSettings::GameType::TIMED;
+        default:
+            settings.gameType = NewGameSettings::GameType::FREE;
+        break;
+        case 1:
+            settings.gameType = NewGameSettings::GameType::TIMED;
+        break;
+        case 2:
+            settings.gameType = NewGameSettings::GameType::COUNTDOWN;
+        break;
     }
 
     return settings;
