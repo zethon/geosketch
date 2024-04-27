@@ -70,6 +70,7 @@ public:
     void setSelecting(bool v);
     
     sf::Vector2f anchor() const { return _anchor; }
+    sf::Vector2f mapSize() const { return _mapSize; }
     
 private:
     std::optional<sf::Vector2u> getXYCords(const sf::Vector2i& mouseCord);

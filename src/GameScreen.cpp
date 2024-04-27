@@ -8,13 +8,18 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
       _settings{settings}, 
       _logger{ log::initializeLogger("GameScreen") }
 {
+    constexpr auto top_buffer = 75.0f;
+    // constexpr auto bottom_buffer = 20.0f;
+
     const auto winsize = _target.getSize();
     const auto winwidth = winsize.x;
     const auto winheight = winsize.y;
 
-    const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
+    // const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
+    const auto edgelen = static_cast<std::float_t>(winheight * 0.9);
     const auto xloc = (winwidth - (edgelen + (edgelen * 0.05f)));
-    const auto yloc = (winheight / 2.f) - (edgelen / 2.f);
+    // const auto yloc = (winheight / 2.f) - (edgelen / 2.f);
+    const auto yloc = top_buffer;
     
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};
@@ -41,9 +46,10 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
         break;
     }
     
-    sf::Vector2u gridsize{griddle, griddle};
+    sf::Vector2u grid_dimensions{griddle, griddle};
     
-    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize, outlineSize);
+    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, grid_dimensions, outlineSize);
+
     auto outline = this->emplaceDrawable<sf::RectangleShape>(
         sf::Vector2f{static_cast<std::float_t>(edgelen), static_cast<std::float_t>(edgelen)});
     outline->setPosition(xloc, yloc);
@@ -106,6 +112,17 @@ void GameScreen::initGuit()
     _timer->setText("00:00.00");
     _timer->getRenderer()->setTextColor(sf::Color::White);
     _gui->add(_timer);
+
+    auto label = tgui::Label::create();
+    label->setWidgetName("label");
+    // label->setPosition({"drawbtn.right + 20", "drawbtn.top - 48"});
+    label->setText("Press Escape to clear | Press Space to submit");
+    label->setTextSize(32);
+    label->getRenderer()->setTextColor(sf::Color::White);
+    const auto xloc = _tiles->anchor().x + (label->getSize().x / 2);
+    const auto yloc = _tiles->anchor().y + _tiles->mapSize().y + 20;
+    label->setPosition(xloc, yloc);
+    _gui->add(label);
 }
 
 PollResult GameScreen::poll(const sf::Event& e)
@@ -125,9 +142,16 @@ PollResult GameScreen::poll(const sf::Event& e)
 
             case sf::Keyboard::Escape:
             {
+                this->_tiles->clear();
+                this->_tiles->setSelecting(true);
+            }
+            break;
+
+            case sf::Keyboard::Num9:
+            {
                 gs::PollResult result;
                 result.type = gs::ActionType::CHANGE_SCREEN;
-                result.data = SCREEN_MAINMENU;
+                result.data = SCREEN_GAMESELECT;
                 return result;
             }
             break;
