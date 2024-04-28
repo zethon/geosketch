@@ -107,11 +107,14 @@ void GameScreen::initGuit()
 
     _timer = tgui::Label::create();
     _timer->setWidgetName("timerlbl");
-    _timer->setPosition(1, 1);
     _timer->setTextSize(124);
     _timer->setText("00:00.00");
     _timer->getRenderer()->setTextColor(sf::Color::White);
+    _timer->setPosition(_tiles->anchor().x - ((_tiles->anchor().x / 2) + (_timer->getSize().x / 2)), 1);
     _gui->add(_timer);
+
+    auto underline = this->emplaceDrawable<sf::RectangleShape>(sf::Vector2f{static_cast<std::float_t>(_timer->getSize().x + 50), 5.0f});
+    underline->setPosition(_timer->getPosition().x - 25, _timer->getPosition().y + _timer->getSize().y + 10);
 
     auto label = tgui::Label::create();
     label->setWidgetName("label");

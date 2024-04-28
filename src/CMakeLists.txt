@@ -1,6 +1,7 @@
 set(SOURCE_FILES
     main.cpp
     AudioService.cpp
+    GameController.cpp
     GameEngine.cpp
     GameScreen.cpp
     GameSelectScreen.cpp
@@ -18,6 +19,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     core.h
     AudioService.h
+    GameController.h
     GameEngine.h
     GameScreen.h
     GameSelectScreen.h
