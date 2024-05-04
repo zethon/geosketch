@@ -56,6 +56,8 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     this->initGuit();
     this->_tiles->setSelecting(true);
 
+    this->_controller = gs::createGameController(settings.gameType);
+
     std::stringstream ss;
     ss << "GameScreen initialized with settings: " << settings;
     _logger->debug(ss.str());

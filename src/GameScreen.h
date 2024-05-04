@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "TileManager.h"
 #include "GameEngine.h"
+#include "GameController.h"
 
 namespace gs
 {
@@ -30,6 +31,8 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> _start;
     tgui::Label::Ptr                _timer;
     bool                            _timeron { false };
+
+    GameControllerPtr                _controller;
 };
 
 } // namespace gs
