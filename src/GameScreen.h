@@ -19,18 +19,18 @@ public:
     void draw() override;
     PollResult poll(const sf::Event&) override;
     PollResult update() override;
+
+    const TileManager& tiles() const { return *_tiles; }
     
 private:
+    friend class GameController;
+
     void initGuit();
     
     std::unique_ptr<TileManager>    _tiles;
     sf::Texture                     _drawbtn_text;
     NewGameSettings                 _settings;
     log::SpdLogPtr                  _logger;
-
-    std::chrono::time_point<std::chrono::steady_clock> _start;
-    tgui::Label::Ptr                _timer;
-    bool                            _timeron { false };
 
     GameControllerPtr                _controller;
 };

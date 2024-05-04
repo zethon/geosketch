@@ -17,11 +17,14 @@ class GameController;
 using GameControllerPtr = std::shared_ptr<GameController>;
 using GameMode = NewGameSettings::GameType;
 
+class GameScreen;
+
 struct GameControllerConfig
 {
     sf::RenderTarget& target;
     ResourceManager& resources;
     NewGameSettings settings;
+    GameScreen* screen = nullptr;
 };
 
 GameControllerPtr createGameController(const GameControllerConfig& config);
@@ -33,6 +36,8 @@ public:
         : _target{ config.target },
           _resources{ config.resources },
           _settings{ config.settings },
+          _screen{ config.screen },
+          _gui{ std::make_unique<tgui::Gui>(config.target) },
           _logger{ log::initializeLogger(name) }
     {
         // nothing to do
@@ -46,11 +51,18 @@ public:
     GameControllerPtr nextController() const;
     GameControllerPtr setNextController(GameControllerPtr nextController);
 
+    void drawDrawables();
+    void drawGui();
+
 protected:
     sf::RenderTarget& _target;
     ResourceManager& _resources;
     NewGameSettings _settings;
+    GameScreen* _screen = nullptr;
+    std::unique_ptr<tgui::Gui> _gui;
     log::SpdLogPtr _logger;
+
+    std::vector<DrawablePtr> _drawables;
 
 private:
     GameControllerPtr _nextController;
@@ -77,20 +89,18 @@ class GameStartController: public GameController
 public:
     static constexpr auto ctrlrname = "GameStartController";
 
-    GameStartController(const GameControllerConfig& config)
-        : GameController{config, ctrlrname}
-    {
-        // nothing to do
-    }
-
+    GameStartController(const GameControllerConfig& config);
     PollResult update() override;
     PollResult poll(const sf::Event&) override;
     void draw() override;
 
 private:
-    
     std::uint8_t _countdown = 0;
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
+
+    chrono::time_point<std::chrono::steady_clock> _start2;
+    tgui::Label::Ptr    _timer;
+    bool                _timeron { false };
 };
 
 

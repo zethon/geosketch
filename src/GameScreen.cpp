@@ -56,7 +56,7 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     this->initGuit();
     this->_tiles->setSelecting(true);
 
-    this->_controller = gs::createGameController({target, resources, settings});
+    this->_controller = gs::createGameController({target, resources, settings, this});
 
     std::stringstream ss;
     ss << "GameScreen initialized with settings: " << settings;
@@ -65,17 +65,6 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
 
 void GameScreen::initGuit()
 {
-    _timer = tgui::Label::create();
-    _timer->setWidgetName("timerlbl");
-    _timer->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
-    _timer->setText("00:00.00");
-    _timer->getRenderer()->setTextColor(sf::Color::White);
-    _timer->setPosition(_tiles->anchor().x - ((_tiles->anchor().x / 2) + (_timer->getSize().x / 2)), 1);
-    _gui->add(_timer);
-
-    auto underline = this->emplaceDrawable<sf::RectangleShape>(sf::Vector2f{static_cast<std::float_t>(_timer->getSize().x + 50), 5.0f});
-    underline->setPosition(_timer->getPosition().x - 25, _timer->getPosition().y + _timer->getSize().y + 10);
-
     auto label = tgui::Label::create();
     label->setWidgetName("label");
     label->setText("Press Escape to clear   Press Space to submit");
@@ -125,21 +114,6 @@ PollResult GameScreen::poll(const sf::Event& e)
                 return result;
             }
             break;
-
-            case sf::Keyboard::Space:
-            {
-                if (_timeron)
-                {
-                    _timeron = false;
-                }
-                else
-                {
-                    _timeron = true;
-                    _start = std::chrono::steady_clock::now();
-                }
-                return {};
-            }
-            break;
         }
     }
 
@@ -163,14 +137,6 @@ PollResult GameScreen::update()
         }
     }
 
-    if (_timeron)
-    {
-        const auto timespace = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _start);
-        const auto minutes = timespace.count() / 60000;
-        const auto seconds = (timespace.count() % 60000) / 1000;
-        const auto tenths = (timespace.count() % 1000) / 10;
-        _timer->setText(fmt::format("{:02d}:{:02d}.{}", minutes, seconds, tenths));
-    }
     return {};
 }
 
