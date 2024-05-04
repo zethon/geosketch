@@ -56,7 +56,7 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     this->initGuit();
     this->_tiles->setSelecting(true);
 
-    this->_controller = gs::createGameController(settings.gameType);
+    this->_controller = gs::createGameController({target, resources, settings});
 
     std::stringstream ss;
     ss << "GameScreen initialized with settings: " << settings;
@@ -93,6 +93,12 @@ PollResult GameScreen::poll(const sf::Event& e)
         result.type != gs::ActionType::NONE)
     {
         return result;
+    }
+
+    // TODO: will controller handle this event?
+    if (_controller && _controller->poll(e).type != gs::ActionType::NONE)
+    {
+        return _controller->poll(e);
     }
 
     if (e.type == sf::Event::KeyPressed)
@@ -144,6 +150,18 @@ PollResult GameScreen::poll(const sf::Event& e)
 PollResult GameScreen::update()
 {
     Screen::update();
+    if (_controller)
+    {
+        if (const auto res = _controller->update(); 
+            res.type == ActionType::CHANGE_GAME_STATE)
+        {
+            if (_controller->nextController())
+            {
+                _controller = _controller->nextController();
+                assert(_controller);
+            }
+        }
+    }
 
     if (_timeron)
     {
@@ -160,6 +178,7 @@ void GameScreen::draw()
 {
     Screen::draw();
     _tiles->draw();
+    if (_controller) _controller->draw();
 }
 
 } // namespace gs

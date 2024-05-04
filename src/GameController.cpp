@@ -1,48 +1,80 @@
 #include "GameController.h"
 
+namespace chrono = std::chrono;
 namespace gs
 {
 
 
-GameControllerPtr createGameController(GameMode mode)
+GameControllerPtr createGameController(const GameControllerConfig& config)
 {
-    switch (mode)
+    GameControllerPtr retval;
+    switch (config.settings.gameType)
     {
         case GameMode::COUNTDOWN:
-            return std::make_shared<CountdownController>(60);
+        {
+            retval = std::make_shared<GameStartController>(config);
+            auto next = retval->setNextController(std::make_shared<TimeLimitGameController>(config));
+            next = next->setNextController(std::make_shared<TimeLimitGameOverController>(config));
+        }
+        break;
+            
         case GameMode::TIMED:
-            return std::make_shared<TimedGameController>();
+        {
+            retval = std::make_shared<GameStartController>(config);
+            auto next = retval->setNextController(std::make_shared<TimedGameController>(config));
+            next = next->setNextController(std::make_shared<TimedGameOverController>(config));
+        }
+        break;
+
         case GameMode::FREE:
-            return std::make_shared<FreeGameController>();
+        {
+            retval = std::make_shared<FreeGameController>(config);
+            retval->setNextController(std::make_shared<FreeGameOverController>(config));
+        }
+        break;
+
         default:
+            assert(false); // should never get here
             return nullptr;
     }
+
+    retval->setNextController(std::make_shared<NullGameController>(config));
+    return retval;
 }
 
-CountdownController::CountdownController(std::uint32_t totalTime)
-    : _totalTime{totalTime}
-{ 
-    // nothing to do
-}
-
-PollResult CountdownController::update()
+GameControllerPtr GameController::setNextController(GameControllerPtr nextController)
 {
-    return {};
+    _nextController = nextController;
+    return _nextController;
+}
+
+GameControllerPtr GameController::nextController() const
+{
+    return _nextController;
 }
 
 PollResult GameStartController::update()
 {
-    return PollResult();
+    auto now = chrono::steady_clock::now();
+    auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - _start);
+    if (elapsed.count() >= 1000)
+    {
+        _logger->info("countdown: {}", _countdown);
+        _countdown++;
+        _start = now;
+    }
+    return {};
 }
 
-void GameStartController::setNextController(GameControllerPtr nextController)
-{
-    _nextController = nextController;
+PollResult GameStartController::poll(const sf::Event&)
+{ 
+    return {}; 
 }
 
-GameControllerPtr GameStartController::nextController() const
-{
-    return _nextController;
-}
+void GameStartController::draw()
+{ 
+    // nothing to do
+};
+
 
 } // namespace gs

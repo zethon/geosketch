@@ -2,84 +2,223 @@
 #include <cstdint>
 #include <memory>
 
+#include <boost/describe/class.hpp>
+
 #include "GameEngine.h"
 #include "PollResult.h"
+#include "GeoSketchLogger.h"
+
+namespace chrono = std::chrono;
 
 namespace gs
 {
 
 class GameController;
 using GameControllerPtr = std::shared_ptr<GameController>;
-
 using GameMode = NewGameSettings::GameType;
 
-GameControllerPtr createGameController(GameMode mode);
+struct GameControllerConfig
+{
+    sf::RenderTarget& target;
+    ResourceManager& resources;
+    NewGameSettings settings;
+};
+
+GameControllerPtr createGameController(const GameControllerConfig& config);
 
 class GameController
 {
-
 public:
+    GameController(const GameControllerConfig& config, const std::string& name)
+        : _target{ config.target },
+          _resources{ config.resources },
+          _settings{ config.settings },
+          _logger{ log::initializeLogger(name) }
+    {
+        // nothing to do
+    }
     virtual ~GameController() = default;
 
     virtual PollResult update() = 0;
-    
-private:
-
-};
-
-class GameStartController: public GameController
-{
-public:
-    PollResult update() override;
-
-    void setNextController(GameControllerPtr nextController);
+    virtual PollResult poll(const sf::Event&) = 0;
+    virtual void draw() = 0;
 
     GameControllerPtr nextController() const;
+    GameControllerPtr setNextController(GameControllerPtr nextController);
+
+protected:
+    sf::RenderTarget& _target;
+    ResourceManager& _resources;
+    NewGameSettings _settings;
+    log::SpdLogPtr _logger;
 
 private:
     GameControllerPtr _nextController;
 };
 
-
-class CountdownController : public GameController
+class NullGameController : public GameController
 {
-
 public:
-    enum class State
+    static constexpr auto ctrlrname = "NullGameController";
+
+    NullGameController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
     {
-        RUNNING,
-        PAUSED,
-        ENDED
-    };
+        // nothing to do
+    }
 
-    CountdownController(std::uint32_t totalTime);
+    PollResult update() override { return {}; }
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
+};
 
-    std::uint32_t totalTime() const { return _totalTime; }
+class GameStartController: public GameController
+{
+public:
+    static constexpr auto ctrlrname = "GameStartController";
+
+    GameStartController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
 
     PollResult update() override;
+    PollResult poll(const sf::Event&) override;
+    void draw() override;
 
 private:
-    std::uint32_t _totalTime; // in seconds
-    State _state { State::RUNNING };
+    
+    std::uint8_t _countdown = 0;
+    chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
+};
+
+
+// ************************************************************************************************
+
+class TimeLimitGameController : public GameController
+{
+public:
+    constexpr static auto ctrlrname = "TimeLimitGameController";
+
+    TimeLimitGameController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
+    PollResult update() override
+    {
+        return {};
+    }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
 
 };
+
+class TimeLimitGameOverController : public GameController
+{
+public:
+    constexpr static auto ctrlrname = "TimeLimitGameOverController";
+
+    TimeLimitGameOverController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
+    PollResult update() override
+    {
+        return {};
+    }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
+};
+
+// ************************************************************************************************
 
 class TimedGameController : public GameController
 {
 public:
+    static constexpr auto ctrlrname = "TimedGameController";
+
+    TimedGameController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
     PollResult update() override
     {
         return {};
     }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
 };
+
+class TimedGameOverController : public GameController
+{
+public:
+    static constexpr auto ctrlrname = "TimedGameOverController";
+
+    TimedGameOverController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
+    PollResult update() override
+    {
+        return {};
+    }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
+};
+
+// ************************************************************************************************
 
 class FreeGameController : public GameController
 {
 public:
+    static constexpr auto ctrlrname = "FreeGameController";
+
+    FreeGameController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
     PollResult update() override
     {
         return {};
     }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
+};
+
+class FreeGameOverController : public GameController
+{
+public:
+    static constexpr auto ctrlrname = "FreeGameOverController";
+
+    FreeGameOverController(const GameControllerConfig& config)
+        : GameController{config, ctrlrname}
+    {
+        // nothing to do
+    }
+
+    PollResult update() override
+    {
+        return {};
+    }
+
+    PollResult poll(const sf::Event&) override { return {}; }
+    void draw() override { };
 };
 
 } // namespace gs
