@@ -246,6 +246,9 @@ int main(int argc, char *argv[])
 
     gs::GameEngine engine{ *win, fs::path{*resourceFolder}, settings };
 
+    logger->info("screen size: {}x{}", win->getSize().x, win->getSize().y);
+    logger->info("screen resolution: {}x{}", sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+
     while (win->isOpen())
     {
         sf::Event e;

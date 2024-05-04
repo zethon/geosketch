@@ -96,7 +96,7 @@ private:
     
     std::shared_ptr<Tile>   _lastTile = nullptr;
     bool                    _dragging = false;
-    bool                    _selecting = false;
+    bool                    _drawing = false;
     
 };
 

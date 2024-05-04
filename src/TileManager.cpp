@@ -95,14 +95,7 @@ void TileManager::event(const sf::Event& ev)
         case sf::Event::MouseButtonPressed:
         {
             _dragging = true;
-//            if (ev.mouseButton.button == sf::Mouse::Left)
-//            {
-//                _selecting = true;
-//            }
-//            else
-//            {
-//                _selecting = false;
-//            }
+            _drawing = ev.mouseButton.button == sf::Mouse::Left;
         }
         break;
             
@@ -135,20 +128,21 @@ void TileManager::event(const sf::Event& ev)
                 if (_dragging)
                 {
                     if (!_lastTile) return;
-                    ptr->setSelected(_selecting);
-                    const auto fx = *local;
-                    const auto gx = sf::Vector2u{
-                        static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
-                        static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
-                    
-                    if(!utils::sfml::AreAdjacent(fx, gx))
-                    {
-                        const auto others = utils::sfml::GetIntersected(fx, gx);
-                        for (const auto& ot : others)
-                        {
-                            _tileContainer[ot.x][ot.y]->setSelected(_selecting);
-                        }
-                    }
+                    ptr->setSelected(_drawing);
+
+                    //const auto fx = *local;
+                    //const auto gx = sf::Vector2u{
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
+                    //
+                    //if(!utils::sfml::AreAdjacent(fx, gx))
+                    //{
+                    //    const auto others = utils::sfml::GetIntersected(fx, gx);
+                    //    for (const auto& ot : others)
+                    //    {
+                    //        _tileContainer[ot.x][ot.y]->setSelected(_drawing);
+                    //    }
+                    //}
                 }
                 
                 ptr->setHovered(true);
@@ -174,7 +168,7 @@ void TileManager::clear()
 
 void TileManager::setSelecting(bool v)
 {
-    _selecting = v;
+    _drawing = v;
 }
 
 std::optional<sf::Vector2u> TileManager::getXYCords(const sf::Vector2i& mouseCord)

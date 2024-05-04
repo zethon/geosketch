@@ -107,7 +107,7 @@ void GameScreen::initGuit()
 
     _timer = tgui::Label::create();
     _timer->setWidgetName("timerlbl");
-    _timer->setTextSize(124);
+    _timer->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
     _timer->setText("00:00.00");
     _timer->getRenderer()->setTextColor(sf::Color::White);
     _timer->setPosition(_tiles->anchor().x - ((_tiles->anchor().x / 2) + (_timer->getSize().x / 2)), 1);
@@ -147,10 +147,12 @@ PollResult GameScreen::poll(const sf::Event& e)
             {
                 this->_tiles->clear();
                 this->_tiles->setSelecting(true);
+                return {};
             }
             break;
 
-            case sf::Keyboard::Num9:
+            case sf::Keyboard::Num7: // fall through
+            case sf::Keyboard::F7:
             {
                 gs::PollResult result;
                 result.type = gs::ActionType::CHANGE_SCREEN;
@@ -170,6 +172,7 @@ PollResult GameScreen::poll(const sf::Event& e)
                     _timeron = true;
                     _start = std::chrono::steady_clock::now();
                 }
+                return {};
             }
             break;
         }
