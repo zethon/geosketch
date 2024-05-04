@@ -8,9 +8,6 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
       _settings{settings}, 
       _logger{ log::initializeLogger("GameScreen") }
 {
-    constexpr auto top_buffer = 75.0f;
-    // constexpr auto bottom_buffer = 20.0f;
-
     const auto winsize = _target.getSize();
     const auto winwidth = winsize.x;
     const auto winheight = winsize.y;
@@ -18,9 +15,8 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     // const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
     const auto edgelen = static_cast<std::float_t>(winheight * 0.9);
     const auto xloc = (winwidth - (edgelen + (edgelen * 0.05f)));
-    // const auto yloc = (winheight / 2.f) - (edgelen / 2.f);
-    const auto yloc = top_buffer;
-    
+    const auto yloc = winheight * 0.025f;
+
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};
     
@@ -67,44 +63,6 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
 
 void GameScreen::initGuit()
 {
-    const auto anchor = _tiles->anchor();
-    _drawbtn_text = *(_resources.load<sf::Texture>("textures/draw-normal.png"));
-    
-    auto drawbtn = tgui::Button::create();
-    drawbtn->setWidgetName("drawbtn");
-    drawbtn->setSize(100, 100);
-    drawbtn->setPosition(anchor.x - (drawbtn->getSize().x + 20), anchor.y);
-    drawbtn->onPress([&]
-    {
-        this->_tiles->setSelecting(true);
-    });
-    drawbtn->getRenderer()->setTexture(_drawbtn_text);
-    drawbtn->getRenderer()->setBackgroundColor(sf::Color::White);
-    _gui->add(drawbtn);
-    
-    auto erasebtn = tgui::Button::create();
-    erasebtn->setWidgetName("erasebtn");
-    erasebtn->setPosition({"drawbtn.left", "drawbtn.bottom + 20"});
-    erasebtn->setSize(100, 100);
-    erasebtn->setText("Erase");
-    erasebtn->onPress([&]
-    {
-        this->_tiles->setSelecting(false);
-    });
-    _gui->add(erasebtn);
-    
-    auto clearbtn = tgui::Button::create();
-    clearbtn->setWidgetName("clearbtn");
-    clearbtn->setPosition({"erasebtn.left", "erasebtn.bottom + 20"});
-    clearbtn->setSize(100, 100);
-    clearbtn->setText("Clear");
-    clearbtn->onPress([&]
-    {
-        this->_tiles->clear();
-        this->_tiles->setSelecting(true);
-    });
-    _gui->add(clearbtn);
-
     _timer = tgui::Label::create();
     _timer->setWidgetName("timerlbl");
     _timer->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
@@ -118,13 +76,12 @@ void GameScreen::initGuit()
 
     auto label = tgui::Label::create();
     label->setWidgetName("label");
-    // label->setPosition({"drawbtn.right + 20", "drawbtn.top - 48"});
-    label->setText("Press Escape to clear | Press Space to submit");
-    label->setTextSize(32);
+    label->setText("Press Escape to clear   Press Space to submit");
+    label->setTextSize(static_cast<std::uint32_t>(_target.getSize().x * 0.0125));
     label->getRenderer()->setTextColor(sf::Color::White);
-    const auto xloc = _tiles->anchor().x + (label->getSize().x / 2);
-    const auto yloc = _tiles->anchor().y + _tiles->mapSize().y + 20;
-    label->setPosition(xloc, yloc);
+    const auto xloc = (_tiles->anchor().x + (_tiles->mapSize().x / 2)) - (label->getSize().x / 2);
+    const auto yloc = (_tiles->anchor().y + _tiles->mapSize().y) + ((_target.getSize().y - (_tiles->anchor().y + _tiles->mapSize().y)) / 2);
+    label->setPosition(xloc, yloc - (label->getSize().y / 2));
     _gui->add(label);
 }
 

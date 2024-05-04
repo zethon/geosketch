@@ -61,6 +61,10 @@ class TileManager
 {
   
 public:
+    // anchor - x,y location of the top left corner of the map
+    // mapsize - width and height of the control itself
+    // gridsize - number of tiles in the x and y directions
+    // outlineSize - thickness of the outline of each tile
     TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize, float outlineSize);
     
     void draw();
