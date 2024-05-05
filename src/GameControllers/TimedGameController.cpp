@@ -48,6 +48,12 @@ void TimedGameController::draw()
 { 
     drawDrawables();
     drawGui();
-};    
+}
+
+void TimedGameController::start()
+{
+    this->_screen->setVisible(true);
+}
+
 
 }  // namespace gs

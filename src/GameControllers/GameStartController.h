@@ -15,6 +15,8 @@ public:
     PollResult poll(const sf::Event&) override;
     void draw() override;
 
+    void start() override;
+
 private:
     std::uint8_t _countdown = 0;
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();

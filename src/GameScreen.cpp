@@ -124,6 +124,12 @@ PollResult GameScreen::poll(const sf::Event& e)
 PollResult GameScreen::update()
 {
     Screen::update();
+    if (!_started)
+    {
+        _controller->start();
+        _started = true;
+    }
+
     if (_controller)
     {
         if (const auto res = _controller->update(); 
@@ -131,6 +137,7 @@ PollResult GameScreen::update()
         {
             _controller = _controller->nextController();
             assert(_controller);
+            _controller->start();
         }
     }
 
@@ -140,7 +147,7 @@ PollResult GameScreen::update()
 void GameScreen::draw()
 {
     Screen::draw();
-    _tiles->draw();
+    if (this->isVisible()) _tiles->draw();
     if (_controller) _controller->draw();
 }
 

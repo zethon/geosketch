@@ -16,6 +16,8 @@ public:
     PollResult poll(const sf::Event&) override;
     void draw() override;
 
+    void start() override;
+
 private:
     chrono::time_point<std::chrono::steady_clock> _start2;
     tgui::Label::Ptr    _timer;

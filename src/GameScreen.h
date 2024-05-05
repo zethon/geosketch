@@ -24,8 +24,6 @@ public:
     const TileManager& tiles() const { return *_tiles; }
     
 private:
-    friend class GameController;
-
     void initGuit();
     
     std::unique_ptr<TileManager>    _tiles;
@@ -33,7 +31,8 @@ private:
     NewGameSettings                 _settings;
     log::SpdLogPtr                  _logger;
 
-    GameControllerPtr                _controller;
+    GameControllerPtr               _controller;
+    bool                            _started { false };
 };
 
 } // namespace gs

@@ -47,6 +47,8 @@ public:
     virtual PollResult update() = 0;
     virtual PollResult poll(const sf::Event&) = 0;
     virtual void draw() = 0;
+    
+    virtual void start() {}
 
     GameControllerPtr nextController() const;
     GameControllerPtr setNextController(GameControllerPtr nextController);

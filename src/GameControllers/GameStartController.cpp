@@ -1,3 +1,4 @@
+#include "../GameScreen.h"
 #include "GameStartController.h"
 
 namespace gs
@@ -39,6 +40,11 @@ void GameStartController::draw()
 { 
     drawDrawables();
     drawGui();
+}
+
+void GameStartController::start()
+{
+    this->_screen->setVisible(false);
 }
 
 } // namespace gs

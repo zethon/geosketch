@@ -40,6 +40,9 @@ public:
         return item;
     }
 
+    void setVisible(bool visible) { _visible = visible; }
+    bool isVisible() const { return _visible; }
+
 protected:
     ResourceManager&            _resources;
     sf::RenderTarget&           _target;
@@ -51,6 +54,9 @@ protected:
     PollResult                  _guiResult;
     
     std::vector<DrawablePtr>    _drawables;
+
+private:
+    bool                        _visible { true };
 }; 
 
 } // namespace gs
