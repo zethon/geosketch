@@ -10,26 +10,29 @@ GameControllerPtr createGameController(const GameControllerConfig& config)
     GameControllerPtr retval;
     switch (config.settings.gameType)
     {
-        case GameMode::COUNTDOWN:
+        case GameMode::COUNTDOWN: // count down
         {
             retval = std::make_shared<GameStartController>(config);
-            auto next = retval->setNextController(std::make_shared<TimeLimitGameController>(config));
-            next = next->setNextController(std::make_shared<TimeLimitGameOverController>(config));
+            auto next = retval->setNextController(std::make_shared<CountdownGameController>(config));
+            next = next->setNextController(std::make_shared<CountdownGameOverController>(config));
+            next->setNextController(std::make_shared<NullGameController>(config));
         }
         break;
             
-        case GameMode::TIMED:
+        case GameMode::TIMED: // count up
         {
             retval = std::make_shared<GameStartController>(config);
             auto next = retval->setNextController(std::make_shared<TimedGameController>(config));
             next = next->setNextController(std::make_shared<TimedGameOverController>(config));
+            next->setNextController(std::make_shared<NullGameController>(config));
         }
         break;
 
         case GameMode::FREE:
         {
             retval = std::make_shared<FreeGameController>(config);
-            retval->setNextController(std::make_shared<FreeGameOverController>(config));
+            auto next = retval->setNextController(std::make_shared<FreeGameOverController>(config));
+            next->setNextController(std::make_shared<NullGameController>(config));
         }
         break;
 
@@ -38,7 +41,6 @@ GameControllerPtr createGameController(const GameControllerConfig& config)
             return nullptr;
     }
 
-    retval->setNextController(std::make_shared<NullGameController>(config));
     return retval;
 }
 
@@ -79,19 +81,6 @@ void GameController::drawGui()
 GameStartController::GameStartController(const GameControllerConfig& config)
     : GameController{config, ctrlrname}
 {
-    auto& tiles = config.screen->tiles();
-
-    _timer = tgui::Label::create();
-    _timer->setWidgetName("timerlbl");
-    _timer->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
-    _timer->setText("00:00.00");
-    _timer->getRenderer()->setTextColor(sf::Color::White);
-    _timer->setPosition(tiles.anchor().x - ((tiles.anchor().x / 2) + (_timer->getSize().x / 2)), 1);
-    _gui->add(_timer);
-
-    auto underline = std::make_shared<sf::RectangleShape>(sf::Vector2f{static_cast<std::float_t>(_timer->getSize().x + 50), 5.0f});
-    _drawables.push_back(underline);
-    underline->setPosition(_timer->getPosition().x - 25, _timer->getPosition().y + _timer->getSize().y + 10);
 }
 
 PollResult GameStartController::update()
@@ -112,6 +101,41 @@ PollResult GameStartController::update()
         return result;
     }
 
+    return {};
+}
+
+PollResult GameStartController::poll(const sf::Event& e)
+{ 
+    _gui->handleEvent(e);
+    return {}; 
+}
+
+void GameStartController::draw()
+{ 
+    drawDrawables();
+    drawGui();
+}
+
+TimedGameController::TimedGameController(const GameControllerConfig& config)
+    : GameController{config, ctrlrname}
+{
+    auto& tiles = config.screen->tiles();
+
+    _timer = tgui::Label::create();
+    _timer->setWidgetName("timerlbl");
+    _timer->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
+    _timer->setText("00:00.00");
+    _timer->getRenderer()->setTextColor(sf::Color::White);
+    _timer->setPosition(tiles.anchor().x - ((tiles.anchor().x / 2) + (_timer->getSize().x / 2)), 1);
+    _gui->add(_timer);
+
+    auto underline = std::make_shared<sf::RectangleShape>(sf::Vector2f{static_cast<std::float_t>(_timer->getSize().x + 50), 5.0f});
+    _drawables.push_back(underline);
+    underline->setPosition(_timer->getPosition().x - 25, _timer->getPosition().y + _timer->getSize().y + 10);
+}
+
+PollResult TimedGameController::update()
+{
     if (_timeron)
     {
         const auto timespace = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _start2);
@@ -124,40 +148,15 @@ PollResult GameStartController::update()
     return {};
 }
 
-PollResult GameStartController::poll(const sf::Event& e)
+PollResult TimedGameController::poll(const sf::Event&)
 { 
-    _gui->handleEvent(e);
-    if (e.type == sf::Event::KeyPressed)
-    {        
-        switch (e.key.code)
-        {
-            default:
-            break;
-
-            case sf::Keyboard::Space:
-            {
-                if (_timeron)
-                {
-                    _timeron = false;
-                }
-                else
-                {
-                    _timeron = true;
-                    _start = std::chrono::steady_clock::now();
-                }
-                return {};
-            }
-            break;
-        }
-    }
-
     return {}; 
 }
 
-void GameStartController::draw()
+void TimedGameController::draw()
 { 
     drawDrawables();
     drawGui();
-}
+};
 
 } // namespace gs

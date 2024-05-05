@@ -129,11 +129,8 @@ PollResult GameScreen::update()
         if (const auto res = _controller->update(); 
             res.type == ActionType::CHANGE_GAME_STATE)
         {
-            if (_controller->nextController())
-            {
-                _controller = _controller->nextController();
-                assert(_controller);
-            }
+            _controller = _controller->nextController();
+            assert(_controller);
         }
     }
 

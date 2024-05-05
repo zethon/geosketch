@@ -97,21 +97,17 @@ public:
 private:
     std::uint8_t _countdown = 0;
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
-
-    chrono::time_point<std::chrono::steady_clock> _start2;
-    tgui::Label::Ptr    _timer;
-    bool                _timeron { false };
 };
 
 
 // ************************************************************************************************
 
-class TimeLimitGameController : public GameController
+class CountdownGameController : public GameController
 {
 public:
-    constexpr static auto ctrlrname = "TimeLimitGameController";
+    constexpr static auto ctrlrname = "CountdownGameController";
 
-    TimeLimitGameController(const GameControllerConfig& config)
+    CountdownGameController(const GameControllerConfig& config)
         : GameController{config, ctrlrname}
     {
         // nothing to do
@@ -127,12 +123,12 @@ public:
 
 };
 
-class TimeLimitGameOverController : public GameController
+class CountdownGameOverController : public GameController
 {
 public:
-    constexpr static auto ctrlrname = "TimeLimitGameOverController";
+    constexpr static auto ctrlrname = "CountdownGameOverController";
 
-    TimeLimitGameOverController(const GameControllerConfig& config)
+    CountdownGameOverController(const GameControllerConfig& config)
         : GameController{config, ctrlrname}
     {
         // nothing to do
@@ -154,19 +150,17 @@ class TimedGameController : public GameController
 public:
     static constexpr auto ctrlrname = "TimedGameController";
 
-    TimedGameController(const GameControllerConfig& config)
-        : GameController{config, ctrlrname}
-    {
-        // nothing to do
-    }
+    TimedGameController(const GameControllerConfig& config);
+    ~TimedGameController() = default;
 
-    PollResult update() override
-    {
-        return {};
-    }
+    PollResult update() override;
+    PollResult poll(const sf::Event&) override;
+    void draw() override;
 
-    PollResult poll(const sf::Event&) override { return {}; }
-    void draw() override { };
+private:
+    chrono::time_point<std::chrono::steady_clock> _start2;
+    tgui::Label::Ptr    _timer;
+    bool                _timeron { true };
 };
 
 class TimedGameOverController : public GameController
