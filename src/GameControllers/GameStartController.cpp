@@ -31,7 +31,7 @@ PollResult GameStartController::update()
 {
     auto now = chrono::steady_clock::now();
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - _start);
-    if (elapsed.count() >= 1000)
+    if (elapsed.count() >= _stepdelay)
     {
         _countdown--;
 
@@ -43,6 +43,7 @@ PollResult GameStartController::update()
         else
         {
             countdown->setText("Go!");
+            _stepdelay = 750;
         }
         
         const auto xloc2 = (this->_target.getSize().x / 2) - (countdown->getSize().x / 2);

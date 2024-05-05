@@ -4,7 +4,7 @@
 
 namespace gs
 {
-
+    
 class GameStartController: public GameController
 {
 public:
@@ -19,7 +19,9 @@ public:
     void start() override;
 
 private:
-    std::int8_t _countdown = COUNTDOWN;
+    std::int8_t     _countdown { COUNTDOWN };
+    std::uint32_t   _stepdelay { 1000 };
+
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
 };
 
