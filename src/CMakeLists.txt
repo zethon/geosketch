@@ -1,7 +1,6 @@
 set(SOURCE_FILES
     main.cpp
     AudioService.cpp
-    GameController.cpp
     GameEngine.cpp
     GameScreen.cpp
     GameSelectScreen.cpp
@@ -14,12 +13,14 @@ set(SOURCE_FILES
     SplashScreen.cpp
     TileManager.cpp
     OSUtils.cpp
+    GameControllers/GameController.cpp
+    GameControllers/GameStartController.cpp
+    GameControllers/TimedGameController.cpp
 )
 
 set(HEADER_FILES
     core.h
     AudioService.h
-    GameController.h
     GameEngine.h
     GameScreen.h
     GameSelectScreen.h
@@ -33,6 +34,9 @@ set(HEADER_FILES
     SFMLUtils.h
     SplashScreen.h
     TileManager.h
+    GameControllers/GameController.h
+    GameControllers/GameStartController.h
+    GameControllers/TimedGameController.h
 )
 
 # if(WIN32)

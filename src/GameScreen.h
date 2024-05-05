@@ -2,10 +2,11 @@
 
 #include <memory>
 
+#include "GameControllers/GameController.h"
+
 #include "Screen.h"
 #include "TileManager.h"
 #include "GameEngine.h"
-#include "GameController.h"
 
 namespace gs
 {

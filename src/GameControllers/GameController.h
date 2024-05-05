@@ -4,9 +4,9 @@
 
 #include <boost/describe/class.hpp>
 
-#include "GameEngine.h"
-#include "PollResult.h"
-#include "GeoSketchLogger.h"
+#include "../GameEngine.h"
+#include "../PollResult.h"
+#include "../GeoSketchLogger.h"
 
 namespace chrono = std::chrono;
 
@@ -84,21 +84,6 @@ public:
     void draw() override { };
 };
 
-class GameStartController: public GameController
-{
-public:
-    static constexpr auto ctrlrname = "GameStartController";
-
-    GameStartController(const GameControllerConfig& config);
-    PollResult update() override;
-    PollResult poll(const sf::Event&) override;
-    void draw() override;
-
-private:
-    std::uint8_t _countdown = 0;
-    chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
-};
-
 
 // ************************************************************************************************
 
@@ -129,46 +114,6 @@ public:
     constexpr static auto ctrlrname = "CountdownGameOverController";
 
     CountdownGameOverController(const GameControllerConfig& config)
-        : GameController{config, ctrlrname}
-    {
-        // nothing to do
-    }
-
-    PollResult update() override
-    {
-        return {};
-    }
-
-    PollResult poll(const sf::Event&) override { return {}; }
-    void draw() override { };
-};
-
-// ************************************************************************************************
-
-class TimedGameController : public GameController
-{
-public:
-    static constexpr auto ctrlrname = "TimedGameController";
-
-    TimedGameController(const GameControllerConfig& config);
-    ~TimedGameController() = default;
-
-    PollResult update() override;
-    PollResult poll(const sf::Event&) override;
-    void draw() override;
-
-private:
-    chrono::time_point<std::chrono::steady_clock> _start2;
-    tgui::Label::Ptr    _timer;
-    bool                _timeron { true };
-};
-
-class TimedGameOverController : public GameController
-{
-public:
-    static constexpr auto ctrlrname = "TimedGameOverController";
-
-    TimedGameOverController(const GameControllerConfig& config)
         : GameController{config, ctrlrname}
     {
         // nothing to do
