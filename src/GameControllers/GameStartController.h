@@ -9,6 +9,7 @@ class GameStartController: public GameController
 {
 public:
     static constexpr auto ctrlrname = "GameStartController";
+    static constexpr auto COUNTDOWN = 3;
 
     GameStartController(const GameControllerConfig& config);
     PollResult update() override;
@@ -18,7 +19,7 @@ public:
     void start() override;
 
 private:
-    std::uint8_t _countdown = 4;
+    std::int8_t _countdown = COUNTDOWN;
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
 };
 

@@ -19,7 +19,6 @@ GameStartController::GameStartController(const GameControllerConfig& config)
 
     auto countdown = tgui::Label::create();
     countdown->setWidgetName("countdown");
-    countdown->setText("3");
     countdown->setTextSize(static_cast<std::uint32_t>(_target.getSize().y * 0.25));
     countdown->getRenderer()->setTextColor(sf::Color::White);
     const auto xloc2 = (config.target.getSize().x / 2) - (countdown->getSize().x / 2);
@@ -34,11 +33,12 @@ PollResult GameStartController::update()
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - _start);
     if (elapsed.count() >= 1000)
     {
-        // get the countdown label
+        _countdown--;
+
         auto countdown = _gui->get<tgui::Label>("countdown");
-        if (_countdown > 2)
+        if (_countdown > 0)
         {
-            countdown->setText(std::to_string(_countdown - 2));
+            countdown->setText(std::to_string(_countdown));
         }
         else
         {
@@ -48,11 +48,11 @@ PollResult GameStartController::update()
         const auto xloc2 = (this->_target.getSize().x / 2) - (countdown->getSize().x / 2);
         const auto yloc2 = (this->_target.getSize().y * 0.5) - (countdown->getSize().y / 2);
         countdown->setPosition(xloc2, yloc2);
-        _countdown--;
+        
         _start = now;
     }
 
-    if (_countdown <= 0)
+    if (_countdown < 0)
     {
         PollResult result;
         result.type = ActionType::CHANGE_GAME_STATE;
@@ -76,6 +76,12 @@ void GameStartController::draw()
 
 void GameStartController::start()
 {
+    auto countdown = _gui->get<tgui::Label>("countdown");
+    countdown->setText(std::to_string(COUNTDOWN));
+    const auto xloc2 = (this->_target.getSize().x / 2) - (countdown->getSize().x / 2);
+    const auto yloc2 = (this->_target.getSize().y * 0.5) - (countdown->getSize().y / 2);
+    countdown->setPosition(xloc2, yloc2);
+
     this->_screen->setVisible(false);
 }
 
