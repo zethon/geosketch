@@ -18,7 +18,7 @@ public:
     void start() override;
 
 private:
-    std::uint8_t _countdown = 0;
+    std::uint8_t _countdown = 4;
     chrono::time_point<chrono::steady_clock> _start = chrono::steady_clock::now();
 };
 
