@@ -84,7 +84,7 @@ PollResult TimedGameController::poll(const sf::Event& e)
                 this->endRound();
                
                 auto country = _countrydb->next();
-                if (country)
+                if (nullptr != country)
                 {
                     this->startRound();
                     setCountryName(country->name());
@@ -111,7 +111,7 @@ void TimedGameController::draw()
 void TimedGameController::start()
 {
     this->_screen->setVisible(true);
-    auto country = _countrydb->next();
+    auto country = _countrydb->current();
     assert(country);
     this->setCountryName(country->name());
     _timeron = true;
@@ -127,11 +127,6 @@ void TimedGameController::setCountryName(const std::string& name)
     _country_name->setPosition(xloc, yloc);
 }
 
-void TimedGameController::calculateScore()
-{
-
-}
-
 void TimedGameController::startRound()
 {
     _roundStart = std::chrono::steady_clock::now();
@@ -139,6 +134,9 @@ void TimedGameController::startRound()
 
 void TimedGameController::endRound()
 {
+    auto curp = _countrydb->current();
+    if (nullptr == curp) return;
+
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _roundStart);
 
     const auto& tiles = _tiles.tiles();
@@ -155,14 +153,10 @@ void TimedGameController::endRound()
         }
     }
 
-    // copy of `Country` type here!
-    auto curp = _countrydb->current();
-    assert(curp);
-    
     auto& newscore = _scores.emplace_back(TiledScore{*(curp), totalSelected, elapsed});
     _tiles.clear(); 
 
-    _logger->debug("Country: {}, Score: {}, Elapsed: {}", newscore.country.name(), newscore.score, newscore.elapsed.count());
+    _logger->debug("SCORE - Country: {}, Score: {}, Elapsed: {}", newscore.country.name(), newscore.score, newscore.elapsed.count());
 }
 
 }  // namespace gs

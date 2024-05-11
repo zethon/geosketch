@@ -37,8 +37,8 @@ public:
     Country* next() 
     {
         _index++;
-        if (_index > _countries.size()) return nullptr;
-        return &(_countries[_index-1]);
+        if (_index >= _countries.size()) return nullptr;
+        return &(_countries[_index]);
     }
 
 private:
@@ -79,7 +79,6 @@ public:
 private:
     void updateTimer();
     void setCountryName(const std::string& name);
-    void calculateScore();
 
     void startRound();
     void endRound();
