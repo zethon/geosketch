@@ -27,6 +27,17 @@ struct GameControllerConfig
     GameScreen* screen = nullptr;
 };
 
+class GameResults
+{
+
+};
+
+class IGameResultCollector
+{
+public:
+
+};
+
 GameControllerPtr createGameController(const GameControllerConfig& config);
 
 class GameController

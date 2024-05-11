@@ -21,7 +21,7 @@ public:
     PollResult poll(const sf::Event&) override;
     PollResult update() override;
 
-    const TileManager& tiles() const { return *_tiles; }
+    TileManager& tilemanager() { return *_tiles; }
     
 private:
     void initGuit();

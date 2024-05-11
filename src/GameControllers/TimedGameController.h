@@ -27,6 +27,13 @@ public:
     CountryDB(const std::vector<std::string>& data);
 
     void addCountry(const std::string& name);
+
+    Country* current() 
+    {
+        if (_index >= _countries.size()) return nullptr;
+        return &(_countries[_index]);
+    }
+
     Country* next() 
     {
         _index++;
@@ -41,9 +48,23 @@ private:
 
 using CountryDBPtr = std::unique_ptr<CountryDB>;
 
+struct TiledScore
+{
+    using ElapsedTime = std::chrono::milliseconds;
+
+    Country         country;
+    std::uint32_t   score;
+    ElapsedTime     elapsed;
+};
+
+using TiledScores = std::vector<TiledScore>;
+
 class TimedGameController : public GameController
 {
 public:
+    using SteadyClock = std::chrono::time_point<std::chrono::steady_clock>;
+    using OptionalTimePoint = std::optional<SteadyClock>;
+
     static constexpr auto ctrlrname = "TimedGameController";
 
     TimedGameController(const GameControllerConfig& config);
@@ -58,14 +79,21 @@ public:
 private:
     void updateTimer();
     void setCountryName(const std::string& name);
+    void calculateScore();
 
-    using OptionalTimePoint = std::optional<std::chrono::time_point<std::chrono::steady_clock>>;
+    void startRound();
+    void endRound();
+
     OptionalTimePoint _start;
+    SteadyClock       _roundStart;
     
     tgui::Label::Ptr    _timer;
     bool                _timeron { false };
     tgui::Label::Ptr    _country_name;
     CountryDBPtr        _countrydb;
+
+    TileManager&        _tiles;
+    TiledScores         _scores;
 };
 
 class TimedGameOverController : public GameController

@@ -61,6 +61,8 @@ class TileManager
 {
   
 public:
+    using TileContainer = std::vector<std::vector<std::shared_ptr<Tile>>>;
+
     // anchor - x,y location of the top left corner of the map
     // mapsize - width and height of the control itself
     // gridsize - number of tiles in the x and y directions
@@ -75,6 +77,8 @@ public:
     
     sf::Vector2f anchor() const { return _anchor; }
     sf::Vector2f mapSize() const { return _mapSize; }
+
+    const TileContainer& tiles() const { return _tileContainer; }
     
 private:
     std::optional<sf::Vector2u> getXYCords(const sf::Vector2i& mouseCord);
@@ -83,11 +87,9 @@ private:
 
     sf::Vector2f        _anchor;
     sf::Vector2f        _mapSize;
-    sf::Vector2u        _gridSize;
+    sf::Vector2u        _gridSize;    
     
-    using TileContainer = std::vector<std::vector<std::shared_ptr<Tile>>>;
     TileContainer       _tileContainer;
-    
     log::SpdLogPtr      _logger;
     
     // const properties
