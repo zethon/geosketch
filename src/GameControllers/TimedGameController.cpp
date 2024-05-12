@@ -8,15 +8,15 @@ using StringList = std::vector<std::string>;
 StringList DATA = { "Bolivia1111111111", "US2", "Canada333", "Mexico444" };
 // StringList DATA = { "Bolivia", "USA", "Canada", "Mexico", "Brazil", "Argentina", "Chile", "Peru", "Colombia", "Venezuela", "Ecuador", "Uruguay", "Paraguay" };
 
-CountryDB::CountryDB(const std::vector<std::string>& data)
+RegionDB::RegionDB(const std::vector<std::string>& data)
 {
-    for (const auto& country : data)
+    for (const auto& region : data)
     {
-        _countries.emplace_back(country);
+        _countries.emplace_back(region);
     }
 }
 
-void CountryDB::addCountry(const std::string& name)
+void RegionDB::addRegion(const std::string& name)
 {
     _countries.emplace_back(name);
 }
@@ -39,14 +39,14 @@ TimedGameController::TimedGameController(const GameControllerConfig& config)
     _country_name = tgui::Label::create();
     _country_name->setWidgetName("countrylbl");
     _country_name->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.04));
-    _country_name->setText("Country Name");
+    _country_name->setText("Region Name");
     _country_name->getRenderer()->setTextColor(sf::Color::White);
     const auto xloc = _tiles.anchor().x - ((_tiles.anchor().x / 2) + (_country_name->getSize().x / 2));
     const auto yloc = _timer->getPosition().y + _timer->getSize().y + 20;
     _country_name->setPosition(xloc, yloc);
     _gui->add(_country_name);
 
-    _countrydb = std::make_unique<CountryDB>(DATA);
+    _countrydb = std::make_unique<RegionDB>(DATA);
 }
 
 void TimedGameController::updateTimer()
@@ -83,15 +83,15 @@ PollResult TimedGameController::poll(const sf::Event& e)
             {
                 this->endRound();
                
-                auto country = _countrydb->next();
-                if (nullptr != country)
+                auto region = _countrydb->next();
+                if (nullptr != region)
                 {
                     this->startRound();
-                    setCountryName(country->name());
+                    setRegionName(region->name());
                 }
                 else
                 {
-                    setCountryName("DONE!");
+                    setRegionName("DONE!");
                     _timeron = false;
                 }
             }
@@ -111,15 +111,15 @@ void TimedGameController::draw()
 void TimedGameController::start()
 {
     this->_screen->setVisible(true);
-    auto country = _countrydb->current();
-    assert(country);
-    this->setCountryName(country->name());
+    auto region = _countrydb->current();
+    assert(region);
+    this->setRegionName(region->name());
     _timeron = true;
 
     this->startRound();
 }
 
-void TimedGameController::setCountryName(const std::string& name)
+void TimedGameController::setRegionName(const std::string& name)
 {
     _country_name->setText(name);
     const auto xloc = _tiles.anchor().x - ((_tiles.anchor().x / 2) + (_country_name->getSize().x / 2));
@@ -156,7 +156,7 @@ void TimedGameController::endRound()
     auto& newscore = _scores.emplace_back(TiledScore{*(curp), totalSelected, elapsed});
     _tiles.clear(); 
 
-    _logger->debug("SCORE - Country: {}, Score: {}, Elapsed: {}", newscore.country.name(), newscore.score, newscore.elapsed.count());
+    _logger->debug("SCORE - Region: {}, Score: {}, Elapsed: {}", newscore.region.name(), newscore.score, newscore.elapsed.count());
 }
 
 }  // namespace gs

@@ -1,58 +1,15 @@
 #pragma once
+#include "../Data/RegionDatabase.h"
 #include "GameController.h"
 
 namespace gs
-{
-
-class Country
-{
-
-public:
-    Country(const std::string& name)
-        : _name{name}
-    {
-        // nothing to do
-    }
-
-    std::string name() const { return _name; }
-
-private:
-    std::string _name;
-};
-
-class CountryDB
-{
-    
-public:
-    CountryDB(const std::vector<std::string>& data);
-
-    void addCountry(const std::string& name);
-
-    Country* current() 
-    {
-        if (_index >= _countries.size()) return nullptr;
-        return &(_countries[_index]);
-    }
-
-    Country* next() 
-    {
-        _index++;
-        if (_index >= _countries.size()) return nullptr;
-        return &(_countries[_index]);
-    }
-
-private:
-    std::vector<Country> _countries;
-    std::size_t _index { 0 };
-};
-
-using CountryDBPtr = std::unique_ptr<CountryDB>;
+{ 
 
 struct TiledScore
 {
     using ElapsedTime = std::chrono::milliseconds;
 
-    Country         country;
+    Region          region;
     std::uint32_t   score;
     ElapsedTime     elapsed;
 };
@@ -78,7 +35,7 @@ public:
 
 private:
     void updateTimer();
-    void setCountryName(const std::string& name);
+    void setRegionName(const std::string& name);
 
     void startRound();
     void endRound();
@@ -89,7 +46,7 @@ private:
     tgui::Label::Ptr    _timer;
     bool                _timeron { false };
     tgui::Label::Ptr    _country_name;
-    CountryDBPtr        _countrydb;
+    RegionDBPtr        _countrydb;
 
     TileManager&        _tiles;
     TiledScores         _scores;
