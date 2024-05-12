@@ -108,7 +108,8 @@ void TimedGameController::draw()
     drawGui();
 }
 
-void TimedGameController::start()
+// @TODO: Clean up this start-round/controller/game mess
+void TimedGameController::startController()
 {
     this->_screen->setVisible(true);
     auto region = _countrydb->current();
@@ -116,7 +117,13 @@ void TimedGameController::start()
     this->setRegionName(region->name());
     _timeron = true;
 
+    _tiles.setCanDraw(true);
     this->startRound();
+}
+
+void TimedGameController::endController()
+{
+    _tiles.setCanDraw(false);
 }
 
 void TimedGameController::setRegionName(const std::string& name)

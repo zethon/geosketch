@@ -75,7 +75,7 @@ void GameStartController::draw()
     drawGui();
 }
 
-void GameStartController::start()
+void GameStartController::startController()
 {
     auto countdown = _gui->get<tgui::Label>("countdown");
     countdown->setText(std::to_string(COUNTDOWN));

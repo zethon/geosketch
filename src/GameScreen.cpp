@@ -126,7 +126,7 @@ PollResult GameScreen::update()
     Screen::update();
     if (!_started)
     {
-        _controller->start();
+        _controller->startController();
         _started = true;
     }
 
@@ -137,7 +137,7 @@ PollResult GameScreen::update()
         {
             _controller = _controller->nextController();
             assert(_controller);
-            _controller->start();
+            _controller->startController();
         }
     }
 

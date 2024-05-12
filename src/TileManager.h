@@ -74,6 +74,9 @@ public:
     
     void clear();
     void setSelecting(bool v);
+
+    void setCanDraw(bool v) { _candraw = v; }
+    bool canDraw() const { return _candraw; }
     
     sf::Vector2f anchor() const { return _anchor; }
     sf::Vector2f mapSize() const { return _mapSize; }
@@ -103,6 +106,7 @@ private:
     std::shared_ptr<Tile>   _lastTile = nullptr;
     bool                    _dragging = false;
     bool                    _drawing = false;
+    bool                    _candraw{ true };
     
 };
 

@@ -16,7 +16,7 @@ public:
     PollResult poll(const sf::Event&) override;
     void draw() override;
 
-    void start() override;
+    void startController() override;
 
 private:
     std::int8_t     _countdown { COUNTDOWN };

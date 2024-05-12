@@ -31,7 +31,8 @@ public:
     PollResult poll(const sf::Event&) override;
     void draw() override;
 
-    void start() override;
+    void startController() override;
+    void endController() override;
 
 private:
     void updateTimer();
