@@ -27,17 +27,7 @@ struct GameControllerConfig
     GameScreen* screen = nullptr;
 };
 
-class GameResults
-{
-
-};
-
-class IGameResultCollector
-{
-public:
-
-};
-
+GameControllerPtr createGameController(const GameControllerConfig& config);
 GameControllerPtr createGameController(const GameControllerConfig& config);
 
 class GameController
@@ -62,7 +52,7 @@ public:
     virtual void startController() {}
     virtual void endController() {}
 
-    GameControllerPtr nextController() const;
+    GameControllerPtr nextController();
     GameControllerPtr setNextController(GameControllerPtr nextController);
 
     void drawDrawables();

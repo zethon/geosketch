@@ -1,3 +1,5 @@
+#include <numeric>
+
 #include "../GameScreen.h"
 #include "TimedGameController.h"
 
@@ -67,6 +69,16 @@ void TimedGameController::updateTimer()
 PollResult TimedGameController::update()
 {
     updateTimer();
+
+    if (_finished)
+    {
+        auto goc = std::static_pointer_cast<TimedGameOverController>(this->nextController());
+        goc->setScores(_scores);
+
+        PollResult result{ ActionType::CHANGE_GAME_STATE };
+        return result;
+    }
+
     return {};
 }
 
@@ -91,8 +103,8 @@ PollResult TimedGameController::poll(const sf::Event& e)
                 }
                 else
                 {
-                    setRegionName("DONE!");
                     _timeron = false;
+                    _finished = true;
                 }
             }
             break;
@@ -164,6 +176,83 @@ void TimedGameController::endRound()
     _tiles.clear(); 
 
     _logger->debug("SCORE - Region: {}, Score: {}, Elapsed: {}", newscore.region.name(), newscore.score, newscore.elapsed.count());
+}
+
+TimedGameOverController::TimedGameOverController(const GameControllerConfig& config)
+    : GameController{ config, ctrlrname }
+{
+    auto label = tgui::Label::create();
+    label->setWidgetName("gameoverlbl");
+    label->setText("Game Over");
+    label->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.1));
+    label->getRenderer()->setTextColor(sf::Color::White);
+    const auto xloc = (_target.getView().getSize().x / 2) - (label->getSize().x / 2);
+    const auto yloc = (_target.getView().getSize().y / 2) - (label->getSize().y / 2);
+    label->setPosition(xloc, yloc);
+    _gui->add(label);
+
+    auto scorelabel = tgui::Label::create();
+    scorelabel->setWidgetName("scorelbl");
+    scorelabel->setText("Score: 0");
+    scorelabel->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.05));
+    scorelabel->getRenderer()->setTextColor(sf::Color::White);
+    const auto xloc2 = (_target.getView().getSize().x / 2) - (scorelabel->getSize().x / 2);
+    const auto yloc2 = yloc + label->getSize().y + 20;
+    scorelabel->setPosition(xloc2, yloc2);
+    _gui->add(scorelabel);
+
+    auto timelabel = tgui::Label::create();
+    timelabel->setWidgetName("timelbl");
+    timelabel->setText("Time: 00:00.00");
+    timelabel->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.05));
+    timelabel->getRenderer()->setTextColor(sf::Color::White);
+    const auto xloc3 = (_target.getView().getSize().x / 2) - (timelabel->getSize().x / 2);
+    const auto yloc3 = yloc2 + scorelabel->getSize().y + 20;
+    timelabel->setPosition(xloc3, yloc3);
+    _gui->add(timelabel);
+}
+
+PollResult TimedGameOverController::update()
+{
+    return {};
+}
+
+PollResult TimedGameOverController::poll(const sf::Event&) 
+{ 
+    return {}; 
+}
+
+void TimedGameOverController::draw() 
+{ 
+    drawDrawables();
+    drawGui();
+}
+
+void TimedGameOverController::startController()
+{
+    this->_screen->setVisible(false);
+
+    auto totalMili = std::accumulate(_scores.begin(), _scores.end(), 0u, 
+        [](auto acc, const auto& score) 
+        { 
+            return acc + static_cast<std::uint32_t>(score.elapsed.count()); 
+        });
+
+    const auto minutes = totalMili / 60000;
+    const auto seconds = (totalMili % 60000) / 1000;
+    const auto tenths = (totalMili % 1000) / 10;
+    auto timelabel = _gui->get<tgui::Label>("timelbl");
+    timelabel->setText(fmt::format("Time: {:02d}:{:02d}.{}", minutes, seconds, tenths));
+
+    auto totalScore = std::accumulate(_scores.begin(), _scores.end(), 0, 
+               [](auto acc, const auto& score) { return acc + score.score; });
+
+    auto scorelabel = _gui->get<tgui::Label>("scorelbl");
+    scorelabel->setText(fmt::format("Score: {}", totalScore));
+}
+
+void TimedGameOverController::endController()
+{
 }
 
 }  // namespace gs

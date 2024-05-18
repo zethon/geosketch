@@ -46,6 +46,7 @@ private:
     
     tgui::Label::Ptr    _timer;
     bool                _timeron { false };
+    bool                _finished { false }; 
     tgui::Label::Ptr    _country_name;
     RegionDBPtr        _countrydb;
 
@@ -58,19 +59,24 @@ class TimedGameOverController : public GameController
 public:
     static constexpr auto ctrlrname = "TimedGameOverController";
 
-    TimedGameOverController(const GameControllerConfig& config)
-        : GameController{config, ctrlrname}
+    TimedGameOverController(const GameControllerConfig& config);
+    ~TimedGameOverController() = default;
+
+    PollResult update() override;
+
+    PollResult poll(const sf::Event&) override;
+    void draw() override;
+
+    void startController() override;
+    void endController() override;
+
+    void setScores(const TiledScores& scores)
     {
-        // nothing to do
+        _scores = scores;
     }
 
-    PollResult update() override
-    {
-        return {};
-    }
-
-    PollResult poll(const sf::Event&) override { return {}; }
-    void draw() override { };
+private:
+    TiledScores _scores;
 };
 
 } // namespace gs

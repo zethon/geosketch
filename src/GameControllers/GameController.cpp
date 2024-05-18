@@ -52,7 +52,7 @@ GameControllerPtr GameController::setNextController(GameControllerPtr nextContro
     return _nextController;
 }
 
-GameControllerPtr GameController::nextController() const
+GameControllerPtr GameController::nextController()
 {
     return _nextController;
 }
