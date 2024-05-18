@@ -187,7 +187,7 @@ TimedGameOverController::TimedGameOverController(const GameControllerConfig& con
     label->setTextSize(static_cast<std::uint32_t>(_target.getView().getSize().x * 0.1));
     label->getRenderer()->setTextColor(sf::Color::White);
     const auto xloc = (_target.getView().getSize().x / 2) - (label->getSize().x / 2);
-    const auto yloc = (_target.getView().getSize().y / 2) - (label->getSize().y / 2);
+    const auto yloc = (_target.getView().getSize().y / 3) - (label->getSize().y / 2);
     label->setPosition(xloc, yloc);
     _gui->add(label);
 
@@ -217,8 +217,26 @@ PollResult TimedGameOverController::update()
     return {};
 }
 
-PollResult TimedGameOverController::poll(const sf::Event&) 
+PollResult TimedGameOverController::poll(const sf::Event&  e) 
 { 
+    if (e.type == sf::Event::KeyPressed)
+    {
+        switch (e.key.code)
+        {
+            default:
+            break;
+
+            case sf::Keyboard::Escape:
+            {
+                gs::PollResult result;
+                result.type = gs::ActionType::CHANGE_SCREEN;
+                result.data = SCREEN_GAMESELECT;
+                return result;
+            }
+            break;
+        }
+    }
+
     return {}; 
 }
 
