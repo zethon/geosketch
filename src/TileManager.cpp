@@ -1,4 +1,3 @@
-#include <SFML/Window/Mouse.hpp>
 #include "SFMLUtils.h"
 
 #include "TileManager.h"
@@ -82,38 +81,32 @@ void TileManager::draw()
         for (const auto& tile : row)
         {
             _window.draw(*tile);
-        } 
+        }
     }
 }
 
 void TileManager::event(const sf::Event& ev)
 {
-    bool lbtn = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-    bool rbtn = sf::Mouse::isButtonPressed(sf::Mouse::Right);
-
     switch (ev.type)
     {
         default:
         break;
             
-        //case sf::Event::MouseButtonPressed:
-        //{
-        //     //_dragging = true;
-        //    _dragging = _candraw;
-        //    _drawing = ev.mouseButton.button == sf::Mouse::Left;
-        //}
-        //break;
-        //    
-        //case sf::Event::MouseButtonReleased:
-        //{
-        //    _dragging = false;
-        //}
-        //break;
+        case sf::Event::MouseButtonPressed:
+        {
+            _dragging = true;
+            _drawing = ev.mouseButton.button == sf::Mouse::Left;
+        }
+        break;
+            
+        case sf::Event::MouseButtonReleased:
+        {
+            _dragging = false;
+        }
+        break;
             
         case sf::Event::MouseMoved:
         {
-            //if (!_dragging) return;
-
             const auto local = this->getXYCords(sf::Vector2i{ev.mouseMove.x, ev.mouseMove.y});
             if (!local.has_value())
             {
@@ -127,24 +120,35 @@ void TileManager::event(const sf::Event& ev)
             
             if (const auto ptr = _tileContainer[local->x][local->y]; _lastTile.get() != ptr.get())
             {
-                auto x = utils::sfml::VectorCast<sf::Vector2u>(ptr->position());
-                //ptr->position() --sf::Vector2f
-                //    local -- sf::Vector2u
-                assert(ptr->position() == local);
-
                 if (_lastTile != nullptr)
                 {
                     _lastTile->setHovered(false);
                 }
 
-                if (_dragging)
+                if (_dragging && _candraw)
                 {
                     if (!_lastTile) return;
                     ptr->setSelected(_drawing);
+
+                    //const auto fx = *local;
+                    //const auto gx = sf::Vector2u{
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
+                    //
+                    //if(!utils::sfml::AreAdjacent(fx, gx))
+                    //{
+                    //    const auto others = utils::sfml::GetIntersected(fx, gx);
+                    //    for (const auto& ot : others)
+                    //    {
+                    //        _tileContainer[ot.x][ot.y]->setSelected(_drawing);
+                    //    }
+                    //}
                 }
                 
                 ptr->setHovered(true);
                 _lastTile = _tileContainer[local->x][local->y];
+                //_logger->trace("mouse: {}, {}", ev.mouseMove.x, ev.mouseMove.y);
+                //_logger->trace("tile: {},{}", local->x, local->y);
             }
         }
         break;
