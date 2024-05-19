@@ -127,9 +127,8 @@ void TimedGameController::startController()
     auto region = _countrydb->current();
     assert(region);
     this->setRegionName(region->name());
-    _timeron = true;
-
     _tiles.setCanDraw(true);
+    _timeron = true;
     this->startRound();
 }
 
