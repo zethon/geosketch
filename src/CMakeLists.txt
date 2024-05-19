@@ -13,6 +13,10 @@ set(SOURCE_FILES
     SplashScreen.cpp
     TileManager.cpp
     OSUtils.cpp
+    Data/RegionDatabase.cpp
+    GameControllers/GameController.cpp
+    GameControllers/GameStartController.cpp
+    GameControllers/TimedGameController.cpp
 )
 
 set(HEADER_FILES
@@ -31,6 +35,10 @@ set(HEADER_FILES
     SFMLUtils.h
     SplashScreen.h
     TileManager.h
+    Data/RegionDatabase.h
+    GameControllers/GameController.h
+    GameControllers/GameStartController.h
+    GameControllers/TimedGameController.h
 )
 
 # if(WIN32)

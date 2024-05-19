@@ -6,6 +6,56 @@
 #include "SettingsScreen.h"
 #include "GameScreen.h"
 
+std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings::Difficulty &diff)
+{
+    switch (diff)
+    {
+        case gs::NewGameSettings::Difficulty::EASY:
+            os << "Easy";
+        break;
+        
+        case gs::NewGameSettings::Difficulty::MEDIUM:
+            os << "Medium";
+        break;
+        
+        case gs::NewGameSettings::Difficulty::HARD:
+            os << "Hard";
+        break;
+        
+        case gs::NewGameSettings::Difficulty::EXPERT:
+            os << "Expert";
+        break;
+    }
+    
+    return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings::GameType &type)
+{
+    switch (type)
+    {
+        case gs::NewGameSettings::GameType::FREE:
+            os << "Free";
+        break;
+        
+        case gs::NewGameSettings::GameType::TIMED:
+            os << "Timed";
+        break;
+
+        case gs::NewGameSettings::GameType::COUNTDOWN:
+            os << "Countdown";
+        break;
+    }
+    
+    return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings &settings)
+{
+    os << "Game Settings { Difficulty: " << settings.difficulty << ", GameType: " << settings.gameType << " }";
+    return os;
+}
+
 namespace gs
 {
 

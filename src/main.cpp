@@ -57,6 +57,9 @@ std::optional<std::string> defaultResourceFolder()
 
 bool validateDataFolder(const fs::path& folder)
 {
+    namespace fs = boost::filesystem;
+    
+    if (!fs::exists(folder)) return false;
     return true;
 }
 
@@ -183,24 +186,24 @@ int main(int argc, char *argv[])
     }
     logger->debug("resource folder: {}", *resourceFolder);
 
-    //auto dataFolder = defaultDataFolder(); // does validation
-    //if (vm.count("data-dir") > 0)
-    //{
+    // auto dataFolder = defaultDataFolder(); // does validation
+    // if (vm.count("data-dir") > 0)
+    // {
     //    dataFolder = vm["data-dir"].as<std::string>();
-    //    
+       
     //    // leading spaces can cause problems on macOS
     //    boost::algorithm::trim(*dataFolder);
     //    if (!validateDataFolder(fs::path{*dataFolder}))
     //    {
     //        dataFolder.reset();
     //    }
-    //}
+    // }
 
-    //if (!dataFolder.has_value())
-    //{
+    // if (!dataFolder.has_value())
+    // {
     //    logger->critical("invalid data folder: no data folder specified");
     //    return 1;
-    //}
+    // }
 
     if (vm.count("screen") > 0)
     {
@@ -245,6 +248,9 @@ int main(int argc, char *argv[])
     win->setFramerateLimit(60);
 
     gs::GameEngine engine{ *win, fs::path{*resourceFolder}, settings };
+
+    logger->info("window size: {}x{}", win->getSize().x, win->getSize().y);
+    logger->info("screen resolution: {}x{}", sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
 
     while (win->isOpen())
     {

@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "GameControllers/GameController.h"
+
 #include "Screen.h"
 #include "TileManager.h"
 #include "GameEngine.h"
@@ -18,6 +20,8 @@ public:
     void draw() override;
     PollResult poll(const sf::Event&) override;
     PollResult update() override;
+
+    TileManager& tilemanager() { return *_tiles; }
     
 private:
     void initGuit();
@@ -27,9 +31,8 @@ private:
     NewGameSettings                 _settings;
     log::SpdLogPtr                  _logger;
 
-    std::chrono::time_point<std::chrono::steady_clock> _start;
-    tgui::Label::Ptr                _timer;
-    bool                            _timeron { false };
+    GameControllerPtr               _controller;
+    bool                            _started { false };
 };
 
 } // namespace gs

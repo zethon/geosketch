@@ -21,7 +21,7 @@ class Tile : public sf::Drawable
     
 public:
     
-    Tile(const sf::Vector2f& location, const sf::Vector2f& size);
+    Tile(const sf::Vector2f& location, const sf::Vector2f& size, float outlineThickness);
     
     bool selected() const { return _selected; }
     void setSelected(bool v)
@@ -61,15 +61,27 @@ class TileManager
 {
   
 public:
-    TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize);
+    using TileContainer = std::vector<std::vector<std::shared_ptr<Tile>>>;
+
+    // anchor - x,y location of the top left corner of the map
+    // mapsize - width and height of the control itself
+    // gridsize - number of tiles in the x and y directions
+    // outlineSize - thickness of the outline of each tile
+    TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize, float outlineSize);
     
     void draw();
     void event(const sf::Event& ev);
     
     void clear();
     void setSelecting(bool v);
+
+    void setCanDraw(bool v) { _candraw = v; }
+    bool canDraw() const { return _candraw; }
     
     sf::Vector2f anchor() const { return _anchor; }
+    sf::Vector2f mapSize() const { return _mapSize; }
+
+    const TileContainer& tiles() const { return _tileContainer; }
     
 private:
     std::optional<sf::Vector2u> getXYCords(const sf::Vector2i& mouseCord);
@@ -78,11 +90,9 @@ private:
 
     sf::Vector2f        _anchor;
     sf::Vector2f        _mapSize;
-    sf::Vector2u        _gridSize;
+    sf::Vector2u        _gridSize;    
     
-    using TileContainer = std::vector<std::vector<std::shared_ptr<Tile>>>;
     TileContainer       _tileContainer;
-    
     log::SpdLogPtr      _logger;
     
     // const properties
@@ -95,7 +105,8 @@ private:
     
     std::shared_ptr<Tile>   _lastTile = nullptr;
     bool                    _dragging = false;
-    bool                    _selecting = false;
+    bool                    _drawing = false;
+    bool                    _candraw{ true };
     
 };
 

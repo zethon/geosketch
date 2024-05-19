@@ -22,20 +22,22 @@ struct GameSettings
 
 struct NewGameSettings
 {
-    enum class Level : std::uint16_t
+    enum class Difficulty : std::uint16_t
     {
         EASY = 1,
         MEDIUM = 2,
-        HARD = 3
+        HARD = 3,
+        EXPERT = 4
     };
 
     enum class GameType : std::uint16_t
     {
         FREE = 1,
-        TIMED = 2
+        TIMED = 2,
+        COUNTDOWN = 3
     };
 
-    Level level = Level::EASY;
+    Difficulty difficulty = Difficulty::EASY;
     GameType gameType = GameType::FREE;
 };
 
@@ -60,5 +62,8 @@ private:
     GameSettings        _settings;
 };
 
-
 } // namespace gs
+
+std::ostream& operator<<(std::ostream& os, const gs::NewGameSettings::Difficulty& diff);
+std::ostream& operator<<(std::ostream& os, const gs::NewGameSettings::GameType& type);
+std::ostream& operator<<(std::ostream& os, const gs::NewGameSettings& settings);

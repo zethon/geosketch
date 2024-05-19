@@ -12,32 +12,40 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     const auto winwidth = winsize.x;
     const auto winheight = winsize.y;
 
-    const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
+    // const auto edgelen = static_cast<std::float_t>((winwidth > winheight ? winheight : winwidth) * 0.925);
+    const auto edgelen = static_cast<std::float_t>(winheight * 0.9);
     const auto xloc = (winwidth - (edgelen + (edgelen * 0.05f)));
-    const auto yloc = (winheight / 2.f) - (edgelen / 2.f);
-    
+    const auto yloc = winheight * 0.025f;
+
     sf::Vector2f anchor{xloc, yloc};
     sf::Vector2f mapsize{edgelen, edgelen};
     
     std::uint32_t griddle = 0;
-    switch (settings.level)
+    auto outlineSize = 0.5f;
+    switch (settings.difficulty)
     {
         default:
             griddle = 50;
         break;
 
-        case NewGameSettings::Level::MEDIUM:
+        case NewGameSettings::Difficulty::MEDIUM:
             griddle = 75;
         break;
 
-        case NewGameSettings::Level::HARD:
+        case NewGameSettings::Difficulty::HARD:
             griddle = 100;
+        break;
+
+        case NewGameSettings::Difficulty::EXPERT:
+            griddle = 100;
+            outlineSize = 0.0f;
         break;
     }
     
-    sf::Vector2u gridsize{griddle, griddle};
+    sf::Vector2u grid_dimensions{griddle, griddle};
     
-    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, gridsize);
+    _tiles = std::make_unique<TileManager>(_target, anchor, mapsize, grid_dimensions, outlineSize);
+
     auto outline = this->emplaceDrawable<sf::RectangleShape>(
         sf::Vector2f{static_cast<std::float_t>(edgelen), static_cast<std::float_t>(edgelen)});
     outline->setPosition(xloc, yloc);
@@ -48,56 +56,24 @@ GameScreen::GameScreen(sf::RenderTarget& target, ResourceManager& resources, con
     this->initGuit();
     this->_tiles->setSelecting(true);
 
-    _logger->info("Game mode: {}", settings.level == NewGameSettings::Level::EASY ? "Easy" : settings.level == NewGameSettings::Level::MEDIUM ? "Medium" : "Hard");
+    this->_controller = gs::createGameController({target, resources, settings, this});
+
+    std::stringstream ss;
+    ss << "GameScreen initialized with settings: " << settings;
+    _logger->debug(ss.str());
 }
 
 void GameScreen::initGuit()
 {
-    const auto anchor = _tiles->anchor();
-    _drawbtn_text = *(_resources.load<sf::Texture>("textures/draw-normal.png"));
-    
-    auto drawbtn = tgui::Button::create();
-    drawbtn->setWidgetName("drawbtn");
-    drawbtn->setSize(100, 100);
-    drawbtn->setPosition(anchor.x - (drawbtn->getSize().x + 20), anchor.y);
-    drawbtn->onPress([&]
-    {
-        this->_tiles->setSelecting(true);
-    });
-    drawbtn->getRenderer()->setTexture(_drawbtn_text);
-    drawbtn->getRenderer()->setBackgroundColor(sf::Color::White);
-    _gui->add(drawbtn);
-    
-    auto erasebtn = tgui::Button::create();
-    erasebtn->setWidgetName("erasebtn");
-    erasebtn->setPosition({"drawbtn.left", "drawbtn.bottom + 20"});
-    erasebtn->setSize(100, 100);
-    erasebtn->setText("Erase");
-    erasebtn->onPress([&]
-    {
-        this->_tiles->setSelecting(false);
-    });
-    _gui->add(erasebtn);
-    
-    auto clearbtn = tgui::Button::create();
-    clearbtn->setWidgetName("clearbtn");
-    clearbtn->setPosition({"erasebtn.left", "erasebtn.bottom + 20"});
-    clearbtn->setSize(100, 100);
-    clearbtn->setText("Clear");
-    clearbtn->onPress([&]
-    {
-        this->_tiles->clear();
-        this->_tiles->setSelecting(true);
-    });
-    _gui->add(clearbtn);
-
-    _timer = tgui::Label::create();
-    _timer->setWidgetName("timerlbl");
-    _timer->setPosition(1, 1);
-    _timer->setTextSize(124);
-    _timer->setText("00:00.00");
-    _timer->getRenderer()->setTextColor(sf::Color::White);
-    _gui->add(_timer);
+    auto label = tgui::Label::create();
+    label->setWidgetName("label");
+    label->setText("Press Escape to clear   Press Space to submit");
+    label->setTextSize(static_cast<std::uint32_t>(_target.getSize().x * 0.0125));
+    label->getRenderer()->setTextColor(sf::Color::White);
+    const auto xloc = (_tiles->anchor().x + (_tiles->mapSize().x / 2)) - (label->getSize().x / 2);
+    const auto yloc = (_tiles->anchor().y + _tiles->mapSize().y) + ((_target.getSize().y - (_tiles->anchor().y + _tiles->mapSize().y)) / 2);
+    label->setPosition(xloc, yloc - (label->getSize().y / 2));
+    _gui->add(label);
 }
 
 PollResult GameScreen::poll(const sf::Event& e)
@@ -106,6 +82,12 @@ PollResult GameScreen::poll(const sf::Event& e)
         result.type != gs::ActionType::NONE)
     {
         return result;
+    }
+
+    // TODO: will controller handle this event?
+    if (_controller && _controller->poll(e).type != gs::ActionType::NONE)
+    {
+        return _controller->poll(e);
     }
 
     if (e.type == sf::Event::KeyPressed)
@@ -117,24 +99,19 @@ PollResult GameScreen::poll(const sf::Event& e)
 
             case sf::Keyboard::Escape:
             {
-                gs::PollResult result;
-                result.type = gs::ActionType::CHANGE_SCREEN;
-                result.data = SCREEN_MAINMENU;
-                return result;
+                this->_tiles->clear();
+                this->_tiles->setSelecting(true);
+                return {};
             }
             break;
 
-            case sf::Keyboard::Space:
+            case sf::Keyboard::Num7: // fall through
+            case sf::Keyboard::F7:
             {
-                if (_timeron)
-                {
-                    _timeron = false;
-                }
-                else
-                {
-                    _timeron = true;
-                    _start = std::chrono::steady_clock::now();
-                }
+                gs::PollResult result;
+                result.type = gs::ActionType::CHANGE_SCREEN;
+                result.data = SCREEN_GAMESELECT;
+                return result;
             }
             break;
         }
@@ -147,22 +124,32 @@ PollResult GameScreen::poll(const sf::Event& e)
 PollResult GameScreen::update()
 {
     Screen::update();
-
-    if (_timeron)
+    if (!_started)
     {
-        const auto timespace = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _start);
-        const auto minutes = timespace.count() / 60000;
-        const auto seconds = (timespace.count() % 60000) / 1000;
-        const auto tenths = (timespace.count() % 1000) / 10;
-        _timer->setText(fmt::format("{:02d}:{:02d}.{}", minutes, seconds, tenths));
+        _controller->startController();
+        _started = true;
     }
+
+    if (_controller)
+    {
+        if (const auto res = _controller->update(); 
+            res.type == ActionType::CHANGE_GAME_STATE)
+        {
+            _controller->endController();
+            _controller = _controller->nextController();
+            assert(_controller);
+            _controller->startController();
+        }
+    }
+
     return {};
 }
 
 void GameScreen::draw()
 {
     Screen::draw();
-    _tiles->draw();
+    if (this->isVisible()) _tiles->draw();
+    if (_controller) _controller->draw();
 }
 
 } // namespace gs

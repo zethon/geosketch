@@ -5,14 +5,14 @@
 namespace gs
 {
 
-Tile::Tile(const sf::Vector2f& location, const sf::Vector2f& size)
+Tile::Tile(const sf::Vector2f& location, const sf::Vector2f& size, float outlineThickness)
     : _color{sf::Color::Transparent}
 {
     _rect.setPosition(location.x, location.y);
     _rect.setSize(size);
     _rect.setFillColor(_color);
     _rect.setOutlineColor(sf::Color(122, 122, 122));
-    _rect.setOutlineThickness(0.5f);
+    _rect.setOutlineThickness(outlineThickness);
 }
 
 void Tile::resetColor()
@@ -41,7 +41,7 @@ void Tile::resetColor()
     }
 }
 
-TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize)
+TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, const sf::Vector2f& mapsize, const sf::Vector2u& gridsize, float outlineSize)
     : _window{window},
       _anchor{anchor},
       _mapSize{mapsize},
@@ -68,7 +68,7 @@ TileManager::TileManager(sf::RenderTarget& window, const sf::Vector2f& anchor, c
         {
             float y = _anchor.y + (yidx * _tileHeight);
             const sf::Vector2 loc{x, y};
-            auto tile = std::make_shared<Tile>(loc, tileSize);
+            auto tile = std::make_shared<Tile>(loc, tileSize, outlineSize);
             back.push_back(tile);
         }
     }
@@ -95,14 +95,7 @@ void TileManager::event(const sf::Event& ev)
         case sf::Event::MouseButtonPressed:
         {
             _dragging = true;
-//            if (ev.mouseButton.button == sf::Mouse::Left)
-//            {
-//                _selecting = true;
-//            }
-//            else
-//            {
-//                _selecting = false;
-//            }
+            _drawing = ev.mouseButton.button == sf::Mouse::Left;
         }
         break;
             
@@ -132,23 +125,24 @@ void TileManager::event(const sf::Event& ev)
                     _lastTile->setHovered(false);
                 }
 
-                if (_dragging)
+                if (_dragging && _candraw)
                 {
                     if (!_lastTile) return;
-                    ptr->setSelected(_selecting);
-                    const auto fx = *local;
-                    const auto gx = sf::Vector2u{
-                        static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
-                        static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
-                    
-                    if(!utils::sfml::AreAdjacent(fx, gx))
-                    {
-                        const auto others = utils::sfml::GetIntersected(fx, gx);
-                        for (const auto& ot : others)
-                        {
-                            _tileContainer[ot.x][ot.y]->setSelected(_selecting);
-                        }
-                    }
+                    ptr->setSelected(_drawing);
+
+                    //const auto fx = *local;
+                    //const auto gx = sf::Vector2u{
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().x)),
+                    //    static_cast<std::uint32_t>(std::floor(_lastTile->position().y)) };
+                    //
+                    //if(!utils::sfml::AreAdjacent(fx, gx))
+                    //{
+                    //    const auto others = utils::sfml::GetIntersected(fx, gx);
+                    //    for (const auto& ot : others)
+                    //    {
+                    //        _tileContainer[ot.x][ot.y]->setSelected(_drawing);
+                    //    }
+                    //}
                 }
                 
                 ptr->setHovered(true);
@@ -174,7 +168,7 @@ void TileManager::clear()
 
 void TileManager::setSelecting(bool v)
 {
-    _selecting = v;
+    _drawing = v;
 }
 
 std::optional<sf::Vector2u> TileManager::getXYCords(const sf::Vector2i& mouseCord)

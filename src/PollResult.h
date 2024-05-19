@@ -18,7 +18,8 @@ enum class ActionType
     NONE = 0,
     EXIT_GAME,
     CHANGE_SCREEN,
-    NEW_GAME
+    NEW_GAME,
+    CHANGE_GAME_STATE
 };
 
 struct PollResult

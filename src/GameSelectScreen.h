@@ -17,7 +17,10 @@ public:
 
 private:
     void initGui();
+    void onStartGame();
     NewGameSettings getNewGameSettings() const;
+
+    gs::NewGameSettings::Difficulty _difficulty;//= gs::NewGameSettings::Difficulty::Easy;
 
     sf::Clock   _clock;
     sf::Texture _bg;

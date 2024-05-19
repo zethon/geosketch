@@ -13,6 +13,8 @@ Screen::Screen(sf::RenderTarget& target, ResourceManager& resources)
 
 void Screen::draw()
 {
+    if (!_visible) return;
+
     auto i = _drawables.begin();
     while (i != _drawables.end())
     {
