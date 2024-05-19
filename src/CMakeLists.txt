@@ -17,6 +17,7 @@ set(SOURCE_FILES
     GameControllers/GameController.cpp
     GameControllers/GameStartController.cpp
     GameControllers/TimedGameController.cpp
+    GameControllers/CountdownGameController.cpp
 )
 
 set(HEADER_FILES
@@ -39,6 +40,7 @@ set(HEADER_FILES
     GameControllers/GameController.h
     GameControllers/GameStartController.h
     GameControllers/TimedGameController.h
+    GameControllers/CountdownGameController.h
 )
 
 # if(WIN32)

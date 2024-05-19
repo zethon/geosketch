@@ -2,6 +2,7 @@
 #include "GameController.h"
 #include "GameStartController.h"
 #include "TimedGameController.h"
+#include "CountdownGameController.h"
 
 namespace chrono = std::chrono;
 namespace gs
