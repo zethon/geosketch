@@ -16,6 +16,13 @@ GameSelectScreen::GameSelectScreen(sf::RenderTarget& target, ResourceManager& re
 
 void GameSelectScreen::initGui()
 {
+    _bg = *(_resources.load<sf::Texture>("images/background-mainmenu.png"));
+    const float bg_ratio = static_cast<float>(_bg.getSize().x) / static_cast<float>(_bg.getSize().y);
+    auto sprite = std::make_shared<sf::Sprite>(_bg);
+    sprite->setPosition(0, 0);
+    sprite->setScale(_target.getSize().x / sprite->getLocalBounds().width, _target.getSize().y / sprite->getLocalBounds().height);
+    addDrawable(sprite);
+
     auto easybtn = tgui::RadioButton::create();
     easybtn->setText("Easy");
     easybtn->setWidgetName("easybutton");

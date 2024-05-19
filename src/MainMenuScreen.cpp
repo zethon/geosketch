@@ -17,10 +17,21 @@ MainMenuScreen::MainMenuScreen(sf::RenderTarget& target, ResourceManager& resour
 
 void MainMenuScreen::initGui()
 {
+    _bg = *(_resources.load<sf::Texture>("images/background-mainmenu.png"));
+    const float bg_ratio = static_cast<float>(_bg.getSize().x) / static_cast<float>(_bg.getSize().y);
+    auto sprite = std::make_shared<sf::Sprite>(_bg);
+    sprite->setPosition(0, 0);
+    sprite->setScale(_target.getSize().x / sprite->getLocalBounds().width, _target.getSize().y / sprite->getLocalBounds().height);
+    addDrawable(sprite);
+
+    const auto buttonWidth = _target.getSize().x / 5;
+    const auto buttonHeight = _target.getSize().y / 10;
+    const auto textSize = _target.getSize().y / 25;
+
     auto newgame = tgui::Button::create();
     newgame->setText("New Game");
-    newgame->setTextSize(100);
-    newgame->setSize(650, 250);
+    newgame->setTextSize(textSize);
+    newgame->setSize(buttonWidth, buttonHeight);
     newgame->setPosition(50,100);
     newgame->onPress([=]
     {
@@ -34,8 +45,8 @@ void MainMenuScreen::initGui()
     
     auto settings = tgui::Button::create();
     settings->setText("Settings");
-    settings->setTextSize(100);
-    settings->setSize(650, 250);
+    settings->setTextSize(textSize);
+    settings->setSize(buttonWidth, buttonHeight);
     settings->setPosition(50,400);
     settings->onPress([=]
     {
@@ -48,8 +59,8 @@ void MainMenuScreen::initGui()
     
     auto exit = tgui::Button::create();
     exit->setText("Exit Game");
-    exit->setTextSize(100);
-    exit->setSize(650, 250);
+    exit->setTextSize(textSize);
+    exit->setSize(buttonWidth, buttonHeight);
     exit->setPosition(50,700);
     exit->onPress([=]
     {
