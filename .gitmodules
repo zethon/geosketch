@@ -1,3 +1,6 @@
 [submodule "TGUI"]
 	path = TGUI
 	url = https://github.com/texus/TGUI.git
+[submodule "geosketch-data"]
+	path = geosketch-data
+	url = https://github.com/zethon/geosketch-data.git
