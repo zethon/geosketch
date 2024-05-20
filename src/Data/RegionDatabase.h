@@ -2,9 +2,29 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
+
+namespace nl = nlohmann;
 
 namespace gs
 {
+
+class Region;
+using RegionPtr = std::shared_ptr<Region>;
+void from_json(const nl::json& j, Region& info);
+
+enum class RegionType
+{
+    COUNTRY,
+    STATE,
+    PROVINCE,
+    TERRITORY,
+    DEPENDENCY,
+    REGION,
+    CONTINENT
+};
+
+void from_json(const nl::json& j, RegionType& type);
 
 class Region
 {
@@ -18,8 +38,21 @@ public:
 
     std::string name() const { return _name; }
 
+    friend void from_json(const nl::json& j, Region& info);
+
 private:
     std::string _name;
+    std::string _capital;
+
+};
+
+class RegionDatabase
+{
+public:
+    explicit RegionDatabase(const std::string& folder);
+
+private:
+    std::string _folder;
 };
 
 class RegionDB
