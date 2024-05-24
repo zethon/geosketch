@@ -91,3 +91,8 @@ add_subdirectory(TGUI)
 include_directories(TGUI/include)
 
 add_subdirectory(src)
+
+if (BUILD_UNIT_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
