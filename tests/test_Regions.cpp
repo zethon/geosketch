@@ -7,11 +7,13 @@ BOOST_AUTO_TEST_SUITE(RegionsTests)
 
 BOOST_AUTO_TEST_CASE(compare_regions)
 {
-    auto continent = std::make_shared<gs::Continent>("Norh America");
+    auto continent = std::make_shared<gs::Continent>("North America");
     continent->addChild<gs::Country>("USA");
-    //app::MyClass test("test");
-    //BOOST_TEST(test.appendIt("test") == "test test");
-    //BOOST_TEST(test.text() == "test");
+
+    auto duplicate = std::make_shared<gs::Continent>("North America");
+
+    BOOST_TEST((*continent != *continent->children()[0]));
+    BOOST_TEST((*continent == *duplicate));
 }
 
 BOOST_AUTO_TEST_SUITE_END()    

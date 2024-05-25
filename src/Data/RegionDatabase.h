@@ -76,6 +76,16 @@ public:
     {
         _parent = parent;
     }
+
+    bool operator==(const Region& other) const
+    {
+        return _name == other._name;
+    }
+
+    bool operator!=(const Region& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 class Continent : public Region
