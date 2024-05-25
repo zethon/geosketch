@@ -23,60 +23,87 @@ using RegionSet = std::set<RegionPtr>;
 
 void from_json(const nl::json& j, Region& info);
 
-enum class RegionType
+enum class RegionType : std::uint8_t
 {
+    NONE = 0,
     CONTINENT,
     COUNTRY,
     STATE,
-    COUNTY
+    COUNTY,
 };
 
 void from_json(const nl::json& j, RegionType& type);
 
 class Region
+    : public std::enable_shared_from_this<Region>
 {
+    friend void from_json(const nl::json& j, Region& info);
 
-public:
-    explicit Region(const std::string& name)
+    RegionWeakPtr _parent;
+    RegionList _children;
+    std::string _name;
+
+protected:
+    RegionType _type = RegionType::NONE;
+
+   explicit Region(const std::string& name)
         : _name{name}
     {
         // nothing to do
     }
 
+public:
     std::string name() const { return _name; }
+    RegionType type() const { return _type; }
 
-    friend void from_json(const nl::json& j, Region& info);
+    RegionList children() const { return _children; }
+    void addChild(RegionPtr child)
+    {
+        _children.push_back(child);
+    }
 
-private:
-    RegionWeakPtr _parent;
-    RegionList _children;
+    template<class RegionT, typename... T>
+    RegionPtr addChild(T... args)
+    {
+        RegionPtr child = std::make_shared<RegionT>(args...);
+        child->setParent(shared_from_this());
+        _children.push_back(child);
+        return child;
+    }
 
-    std::string _name;
-
+    RegionPtr parent() const { return _parent.lock(); }
+    void setParent(RegionPtr parent)
+    {
+        _parent = parent;
+    }
 };
 
 class Continent : public Region
 {
 public:
-    using Region::Region;
+    explicit Continent(const std::string& name) 
+        : Region(name) { _type = RegionType::CONTINENT; }
 };
 
 class Country : public Region
 {
 public:
-    using Region::Region;
+    explicit Country(const std::string& name) 
+        : Region(name) { _type = RegionType::COUNTRY; }
 };
 
 class State : public Region
 {
 public:
-    using Region::Region;
+    explicit State(const std::string& name) 
+        : Region(name) { _type = RegionType::STATE; }
 };
 
 class County : public Region
 {
 public:
-    using Region::Region;
+    explicit County(const std::string& name) 
+        : Region(name) { _type = RegionType::COUNTY; }
 };
 
 

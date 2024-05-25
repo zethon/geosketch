@@ -12,15 +12,15 @@ StringList DATA = { "Bolivia1111111111", "US2", "Canada333", "Mexico444" };
 
 RegionDB::RegionDB(const std::vector<std::string>& data)
 {
-    for (const auto& region : data)
-    {
-        _countries.emplace_back(region);
-    }
+    //for (const auto& region : data)
+    //{
+    //    _countries.emplace_back(region);
+    //}
 }
 
 void RegionDB::addRegion(const std::string& name)
 {
-    _countries.emplace_back(name);
+    //_countries.emplace_back(name);
 }
 
 TimedGameController::TimedGameController(const GameControllerConfig& config)
