@@ -8,6 +8,7 @@ function(create_test testname SOURCEFILES LINKEDLIBRARIES)
 
     target_link_libraries(test_${testname}
         PUBLIC
+            ${CONAN_LIBS}
             ${CONAN_LIBS_BOOST}
             ${LINKEDLIBRARIES}
     )
@@ -21,6 +22,8 @@ endfunction(create_test)
 set(REGION_SOURCE_FILES
     ../src/Data/RegionDatabase.h
     ../src/Data/RegionDatabase.cpp
+    ../src/Data/Regions.h
+    ../src/Data/Regions.cpp
 )
 
 create_test("Regions" "${REGION_SOURCE_FILES}" "${REGION_LIB_FILES}")

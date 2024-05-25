@@ -3,6 +3,7 @@
 
 #include "../src/Data/RegionDatabase.h"
 
+
 BOOST_AUTO_TEST_SUITE(RegionsTests)
 
 BOOST_AUTO_TEST_CASE(compare_regions)
@@ -12,8 +13,9 @@ BOOST_AUTO_TEST_CASE(compare_regions)
 
     auto duplicate = std::make_shared<gs::Continent>("North America");
 
-    BOOST_TEST((*continent != *continent->children()[0]));
-    BOOST_TEST((*continent == *duplicate));
+    BOOST_TEST(*continent != *continent->children()[0]);
+    BOOST_TEST(*continent == *duplicate);
+    BOOST_TEST(*continent == *continent->children()[0]);
 }
 
-BOOST_AUTO_TEST_SUITE_END()    
+BOOST_AUTO_TEST_SUITE_END()

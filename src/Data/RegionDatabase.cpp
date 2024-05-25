@@ -13,22 +13,6 @@ namespace gs
 //          states/provinces/territories
 //              counties
 
-void from_json(const nl::json& j, Region& region)
-{
-    j.at("name").get_to(region._name);
-}
-
-void from_json(const nl::json& j, RegionType& type)
-{
-    std::string s;
-    j.get_to(s);
-    if (s == "CONTINENT") type = RegionType::CONTINENT;
-    else if (s == "COUNTRY") type = RegionType::COUNTRY;
-    else if (s == "STATE") type = RegionType::STATE;
-    else if (s == "COUNTY") type = RegionType::COUNTY;
-
-    throw std::runtime_error("Invalid region type");
-}
 
 
 RegionDatabase::RegionDatabase(const std::string& folder)

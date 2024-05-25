@@ -14,6 +14,7 @@ set(SOURCE_FILES
     TileManager.cpp
     OSUtils.cpp
     Data/RegionDatabase.cpp
+    Data/Regions.cpp
     GameControllers/GameController.cpp
     GameControllers/GameStartController.cpp
     GameControllers/TimedGameController.cpp
@@ -37,6 +38,7 @@ set(HEADER_FILES
     SplashScreen.h
     TileManager.h
     Data/RegionDatabase.h
+    Data/Regions.h
     GameControllers/GameController.h
     GameControllers/GameStartController.h
     GameControllers/TimedGameController.h
