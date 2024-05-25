@@ -22,6 +22,22 @@ namespace gs
 //          states/provinces/territories
 //              counties
 
+
+bool Region::operator==(const Region& other) const
+{
+    if (_name != other._name) return false;
+    // TODO: FIX DEREFERENCE NULL POINTER
+    if (*(other.parent()) != *(parent())) return false;
+    if (other.children().size() != children().size()) return false;
+
+    return true;
+}
+
+bool Region::operator!=(const Region& other) const
+{
+    return !(*this == other);
+}
+
 void from_json(const nl::json& j, Region& region)
 {
     j.at("name").get_to(region._name);
