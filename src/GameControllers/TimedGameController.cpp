@@ -7,20 +7,15 @@ namespace gs
 {
 
 using StringList = std::vector<std::string>;
-StringList DATA = { "Bolivia1111111111", "US2", "Canada333", "Mexico444" };
+StringList DATA = { "Bolivia", "USA", "Canada", "Mexico" };
 // StringList DATA = { "Bolivia", "USA", "Canada", "Mexico", "Brazil", "Argentina", "Chile", "Peru", "Colombia", "Venezuela", "Ecuador", "Uruguay", "Paraguay" };
 
 RegionDB::RegionDB(const std::vector<std::string>& data)
 {
-    //for (const auto& region : data)
-    //{
-    //    _countries.emplace_back(region);
-    //}
-}
-
-void RegionDB::addRegion(const std::string& name)
-{
-    //_countries.emplace_back(name);
+    for (const auto& region : data)
+    {
+        _countries.emplace_back(std::make_shared<gs::Country>(region));
+    }
 }
 
 TimedGameController::TimedGameController(const GameControllerConfig& config)

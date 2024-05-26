@@ -22,23 +22,21 @@ class RegionDB
 public:
     RegionDB(const std::vector<std::string>& data);
 
-    void addRegion(const std::string& name);
-
-    Region* current() 
+    RegionPtr current()
     {
         if (_index >= _countries.size()) return nullptr;
-        return &(_countries[_index]);
+        return (_countries[_index]);
     }
 
-    Region* next() 
+    RegionPtr next()
     {
         _index++;
         if (_index >= _countries.size()) return nullptr;
-        return &(_countries[_index]);
+        return (_countries[_index]);
     }
 
 private:
-    std::vector<Region> _countries;
+    std::vector<RegionPtr> _countries;
     std::size_t _index { 0 };
 };
 
