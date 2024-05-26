@@ -1,3 +1,5 @@
+#include <nlohmann/json.hpp>
+
 #include "GameEngine.h"
 #include "SplashScreen.h"
 #include "MainMenuScreen.h"
@@ -5,6 +7,8 @@
 #include "GameSelectScreen.h"
 #include "SettingsScreen.h"
 #include "GameScreen.h"
+
+namespace nl = nlohmann;
 
 std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings::Difficulty &diff)
 {
@@ -59,13 +63,27 @@ std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings &settings)
 namespace gs
 {
 
+void to_json(nlohmann::json& j, const GameSettings& settings)
+{
+    j =  nl::json
+        {
+            { "dataFolder", settings.dataFolder.string()},
+            { "resourceFolder", settings.resourceFolder.string() },
+            { "startScreen", settings.startScreen },
+            { "muteAllSounds", settings.muteAllSounds }
+        };
+}
+
+
 GameEngine::GameEngine(sf::RenderTarget& target, const GameSettings& settings)
     : _target{ target },
       _resources{ settings.resourceFolder },
-      _settings{ settings }
+      _settings{ settings },
+      _logger{ log::initializeLogger("SettingsScreen") }
 {
     initAudioService();
     changeScreen(settings.startScreen);
+    _logger->debug("Game Engine Settings: {}", nl::json{ settings }.dump());
 }
 
 void GameEngine::drawScreen()
@@ -165,5 +183,7 @@ void GameEngine::initAudioService()
     gs::AudioLocator::setMusic(musicptr);
     gs::AudioLocator::setSound(soundptr);
 }
+
+
 
 } // namespace gs

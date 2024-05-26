@@ -3,11 +3,14 @@
 
 #include "boost/filesystem.hpp"
 
+#include <nlohmann/json.hpp>
+
 #include <SFML/Graphics.hpp>
 
 #include "Screen.h"
 #include "PollResult.h"
 #include "ResourceManager.h"
+#include "GeoSketchLogger.h"
 
 namespace gs
 {
@@ -21,6 +24,8 @@ struct GameSettings
     fs::path resourceFolder;
     fs::path dataFolder;
 };
+
+void to_json(nlohmann::json& j, const GameSettings& settings);
 
 struct NewGameSettings
 {
@@ -62,6 +67,7 @@ private:
     ScreenPtr           _currentScreen;
     ResourceManager     _resources;
     GameSettings        _settings;
+    log::SpdLogPtr      _logger;
 };
 
 } // namespace gs
