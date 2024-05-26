@@ -25,10 +25,23 @@ namespace gs
 
 bool Region::operator==(const Region& other) const
 {
-    if (_name != other._name) return false;
-    // TODO: FIX DEREFERENCE NULL POINTER
-    if (*(other.parent()) != *(parent())) return false;
-    if (other.children().size() != children().size()) return false;
+    if ((_type != other._type)
+        || (_name != other._name)
+        || (_children.size() != other._children.size()))
+    {
+        return false;
+    }
+    
+    
+    auto this_parent = parent();
+    auto other_parent = other.parent();
+
+    if ((!this_parent && other_parent)
+        || (this_parent && !other_parent)) return false;
+
+    assert((this_parent && other_parent) || (!this_parent && !other_parent));
+    if (!this_parent) return true; // both parents are null
+    if (*this_parent != *other_parent) return false;
 
     return true;
 }
