@@ -59,9 +59,9 @@ std::ostream& operator<<(std::ostream &os, const gs::NewGameSettings &settings)
 namespace gs
 {
 
-GameEngine::GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath, const GameSettings& settings)
+GameEngine::GameEngine(sf::RenderTarget& target, const GameSettings& settings)
     : _target{ target },
-      _resources{ respath },
+      _resources{ settings.resourceFolder },
       _settings{ settings }
 {
     initAudioService();

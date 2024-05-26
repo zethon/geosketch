@@ -186,24 +186,24 @@ int main(int argc, char *argv[])
     }
     logger->debug("resource folder: {}", *resourceFolder);
 
-    // auto dataFolder = defaultDataFolder(); // does validation
-    // if (vm.count("data-dir") > 0)
-    // {
-    //    dataFolder = vm["data-dir"].as<std::string>();
+     auto dataFolder = defaultDataFolder(); // does validation
+     if (vm.count("data-dir") > 0)
+     {
+        dataFolder = vm["data-dir"].as<std::string>();
        
-    //    // leading spaces can cause problems on macOS
-    //    boost::algorithm::trim(*dataFolder);
-    //    if (!validateDataFolder(fs::path{*dataFolder}))
-    //    {
-    //        dataFolder.reset();
-    //    }
-    // }
+        // leading spaces can cause problems on macOS
+        boost::algorithm::trim(*dataFolder);
+        if (!validateDataFolder(fs::path{*dataFolder}))
+        {
+            dataFolder.reset();
+        }
+     }
 
-    // if (!dataFolder.has_value())
-    // {
-    //    logger->critical("invalid data folder: no data folder specified");
-    //    return 1;
-    // }
+     if (!dataFolder.has_value())
+     {
+        logger->critical("invalid data folder: no data folder specified");
+        return 1;
+     }
 
     if (vm.count("screen") > 0)
     {
@@ -211,6 +211,8 @@ int main(int argc, char *argv[])
     }
     
     settings.muteAllSounds = vm["mute"].as<bool>();
+    settings.resourceFolder = *resourceFolder;
+    settings.dataFolder = *dataFolder;
     
     std::optional<sf::Vector2u> winsize;
     if (vm.count("window-size") > 0)
@@ -247,7 +249,7 @@ int main(int argc, char *argv[])
 
     win->setFramerateLimit(60);
 
-    gs::GameEngine engine{ *win, fs::path{*resourceFolder}, settings };
+    gs::GameEngine engine{ *win, settings };
 
     logger->info("window size: {}x{}", win->getSize().x, win->getSize().y);
     logger->info("screen resolution: {}x{}", sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);

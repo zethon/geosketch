@@ -18,6 +18,8 @@ struct GameSettings
 {
     bool muteAllSounds = false;
     std::uint16_t startScreen = SCREEN_SPLASH;
+    fs::path resourceFolder;
+    fs::path dataFolder;
 };
 
 struct NewGameSettings
@@ -45,7 +47,7 @@ class GameEngine
 {
 
 public:
-    GameEngine(sf::RenderTarget& target, const boost::filesystem::path& respath, const GameSettings& settings);
+    GameEngine(sf::RenderTarget& target, const GameSettings& settings);
 
     void drawScreen();
     void update();
