@@ -47,6 +47,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
+find_package(SQLite3 REQUIRED)
+
 if (MSVC)
     add_definitions(
         -DWIN32
@@ -78,7 +80,6 @@ endif(MSVC)
 # of platform
 string(APPEND CMAKE_CXX_FLAGS_RELEASE " -DRELEASE")
 string(APPEND CMAKE_CXX_FLAGS_MINSIZEREL " -DRELEASE")
-
 
 # include TGUI and build only what we need
 set(TGUI_BUILD_GUI_BUILDER FALSE)

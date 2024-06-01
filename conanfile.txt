@@ -5,6 +5,7 @@ sfml/2.5.1
 spdlog/1.9.2
 nlohmann_json/3.10.5
 zlib/1.2.12
+sqlite3/3.46.0
 [generators]
 cmake
 cmake_find_package
