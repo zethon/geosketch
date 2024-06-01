@@ -2,6 +2,8 @@
 #include <memory>
 #include <string>
 
+#include <sqlite3.h> 
+
 #include "Regions.h"
 
 namespace gs
@@ -15,6 +17,25 @@ public:
 private:
     std::string _folder;
 };
+
+class RegionDatabaseCompiler
+{
+public:
+    enum class Result { SUCCESS = 0, UNKNOWN_ERROR, BACKUP_ERROR, CREATE_ERROR };
+    explicit RegionDatabaseCompiler(const std::string& folder);
+    
+    
+    Result compile();
+
+private:
+    bool backup();
+    bool createNewDB();
+
+    sqlite3* _db;
+    std::string _folder;
+    log::SpdLogPtr _logger;
+};
+
 
 class RegionDB
 {

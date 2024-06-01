@@ -17,11 +17,14 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <sqlite3.h> 
+
 #include "core.h"
 #include "GeoSketchLogger.h"
 #include "GameEngine.h"
 #include "PollResult.h"
 #include "OSUtils.h"
+#include "Data/RegionDatabase.h"
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -82,6 +85,15 @@ std::optional<std::string> defaultDataFolder()
     return {};
 }
 
+void recompileDatabase(const std::string& dataFolder)
+{
+    gs::RegionDatabaseCompiler compiler{ dataFolder };
+    if (compiler.compile() != gs::RegionDatabaseCompiler::Result::SUCCESS)
+    {
+        spdlog::get(gs::log::GLOBAL_LOGGER)->error("cannot compile database");
+    }
+}
+
 void initLogging(std::string_view logfile)
 {
     // create the root logger
@@ -116,6 +128,7 @@ int main(int argc, char *argv[])
         ("loglevel", po::value<std::string>(), "trace,debug,info,warning,error,critical,off")
         ("mute", po::bool_switch()->default_value(false), "mute all sounds")
         ("screen,s", po::value<std::uint16_t>(), "start screen id")
+        ("compile-db,c", po::bool_switch()->default_value(false), "compile database")
         ;
 
     po::variables_map vm;
@@ -186,9 +199,9 @@ int main(int argc, char *argv[])
     }
     logger->debug("resource folder: {}", *resourceFolder);
 
-     auto dataFolder = defaultDataFolder(); // does validation
-     if (vm.count("data-dir") > 0)
-     {
+    auto dataFolder = defaultDataFolder(); // does validation
+    if (vm.count("data-dir") > 0)
+    {
         dataFolder = vm["data-dir"].as<std::string>();
        
         // leading spaces can cause problems on macOS
@@ -197,13 +210,19 @@ int main(int argc, char *argv[])
         {
             dataFolder.reset();
         }
-     }
+    }
 
-     if (!dataFolder.has_value())
-     {
-        logger->critical("invalid data folder: no data folder specified");
-        return 1;
-     }
+    if (!dataFolder.has_value())
+    {
+    logger->critical("invalid data folder: no data folder specified");
+    return 1;
+    }
+
+    if (vm.count("compile-db") > 0)
+    {
+        logger->info("Recompiling database in folder: {}", *dataFolder);
+        recompileDatabase(*dataFolder);
+    }
 
     if (vm.count("screen") > 0)
     {
