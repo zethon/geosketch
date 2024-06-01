@@ -58,6 +58,13 @@ auto RegionDatabaseCompiler::compile() -> Result
     }
 
     // create tables
+    if (!createTables())
+    {
+        _logger->error("cannot create tables");
+        return Result::CREATE_TABLES_ERROR;
+    }
+
+
     // insert data from json
     // close db
 
@@ -67,6 +74,41 @@ auto RegionDatabaseCompiler::compile() -> Result
 bool RegionDatabaseCompiler::backup()
 {
     return true;
+}
+
+namespace
+{
+
+constexpr auto CREATE_REGION_TABLE = R"(
+CREATE TABLE "region" (
+    "id" INTEGER NOT NULL UNIQUE,
+    "parent" INTEGER,
+    "name" TEXT,
+    "type" TEXT,
+    PRIMARY KEY("id" AUTOINCREMENT)
+    );
+)";
+
+constexpr auto CREATE_FACTOID_TABLE = R"(
+CREATE TABLE "factoid" (
+    "id" INTEGER NOT NULL UNIQUE,
+    "rid" INTEGER NOT NULL,
+    "text" TEXT NOT NULL,
+    PRIMARY KEY("id" AUTOINCREMENT)
+    );
+)";
+
+constexpr auto CREATE_STATS_TABLE = R"(
+CREATE TABLE "stats" (
+    "id" INTEGER NOT NULL UNIQUE,
+    "rid" INTEGER,
+    "name" TEXT,
+    "value" TEXT,
+    "order" INTEGER,
+    PRIMARY KEY("id" AUTOINCREMENT)
+    );
+)";
+
 }
 
 bool RegionDatabaseCompiler::createNewDB()
@@ -79,6 +121,39 @@ bool RegionDatabaseCompiler::createNewDB()
     {
         _logger->error("cannot open database: {}", sqlite3_errmsg(_db));
         sqlite3_close(_db);
+        _db = nullptr;
+        return false;
+    }
+
+    return true;
+}
+
+bool RegionDatabaseCompiler::createTables()
+{
+    assert(_db);
+    char* errMsg = 0;
+
+    auto result = sqlite3_exec(_db, CREATE_REGION_TABLE, 0, 0, &errMsg);
+    if (result != SQLITE_OK)
+    {
+        _logger->error("Error creating REGION table: {}", errMsg);
+        sqlite3_free(errMsg);
+        return false;
+    }
+
+    result = sqlite3_exec(_db, CREATE_FACTOID_TABLE, 0, 0, &errMsg);
+    if (result != SQLITE_OK)
+    {
+        _logger->error("Error creating FACTOID table: {}", errMsg);
+        sqlite3_free(errMsg);
+        return false;
+    }
+
+    result = sqlite3_exec(_db, CREATE_STATS_TABLE, 0, 0, &errMsg);
+    if (result != SQLITE_OK)
+    {
+        _logger->error("Error creating STATS table: {}", errMsg);
+        sqlite3_free(errMsg);
         return false;
     }
 
