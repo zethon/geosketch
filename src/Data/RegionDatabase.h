@@ -21,8 +21,17 @@ private:
 class RegionDatabaseCompiler
 {
 public:
-    enum class Result { SUCCESS = 0, UNKNOWN_ERROR, BACKUP_ERROR, CREATE_ERROR, CREATE_TABLES_ERROR };
-    explicit RegionDatabaseCompiler(const std::string& folder);
+    enum class Result
+    {
+        SUCCESS = 0,
+        UNKNOWN_ERROR,
+        BACKUP_ERROR,
+        CREATE_ERROR,
+        CREATE_TABLES_ERROR,
+        DATA_IMPORT_ERROR,
+    };
+
+    explicit RegionDatabaseCompiler(const std::string& folder, const std::string& source);
     
     
     Result compile();
@@ -31,9 +40,11 @@ private:
     bool backup();
     bool createNewDB();
     bool createTables();
+    bool importData();
 
     sqlite3* _db;
     std::string _folder;
+    std::string _source;
     log::SpdLogPtr _logger;
 };
 

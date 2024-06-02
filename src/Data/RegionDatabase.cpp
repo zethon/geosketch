@@ -35,14 +35,16 @@ RegionDatabase::RegionDatabase(const std::string& folder)
 }
 
 
-RegionDatabaseCompiler::RegionDatabaseCompiler(const std::string& folder)
+RegionDatabaseCompiler::RegionDatabaseCompiler(const std::string& folder, const std::string& source)
     : _folder{ folder },
+      _source{ source },
       _logger{ log::initializeLogger("RegionDatabaseCompiler") }
 {
 }
 
 auto RegionDatabaseCompiler::compile() -> Result
 {
+    _logger->info("compiling region database from source: {}", _source);
     // move existing db to backup (i.e. region.db.001, region.db.002, etc.)
     if (!backup())
     {
@@ -64,9 +66,15 @@ auto RegionDatabaseCompiler::compile() -> Result
         return Result::CREATE_TABLES_ERROR;
     }
 
-
     // insert data from json
+    if (!importData())
+    {
+        _logger->error("cannot import data");
+        return Result::DATA_IMPORT_ERROR;
+    }
+
     // close db
+    sqlite3_close(_db);
 
     return Result();
 }
@@ -157,6 +165,11 @@ bool RegionDatabaseCompiler::createTables()
         return false;
     }
 
+    return true;
+}
+
+bool RegionDatabaseCompiler::importData()
+{
     return true;
 }
 

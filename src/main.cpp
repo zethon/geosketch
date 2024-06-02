@@ -68,26 +68,39 @@ bool validateDataFolder(const fs::path& folder)
 
 std::optional<std::string> defaultDataFolder()
 {
-    const auto exepath = boost::dll::program_location().parent_path();
-    auto resfolder = exepath / "data";
-    if (validateDataFolder(resfolder.string())) return resfolder.string();
+    namespace fs = boost::filesystem;
+    fs::path dataFolder;
 
-    resfolder = exepath.parent_path() / "Data";
-    if (validateDataFolder(resfolder.string())) return resfolder.string();
+    try
+    {
+#ifdef _WINDOWS
+        throw std::runtime_error("default data folder not implemented");
+#elif defined(__APPLE__)
+        dataFolder = fs::path{lz::getDataFolder()} / fmt::format(".{}", APP_DOMAIN);
+#else
+        throw std::runtime_error("default data folder not implemented");
+#endif
+        fs::create_directories(dataFolder);
+    }
+    catch (const boost::filesystem::filesystem_error& e)
+    {
+        spdlog::get(gs::log::GLOBAL_LOGGER)->error("filesystem error creating data folder: {}", e.what());
+    }
+    catch (const std::exception& e)
+    {
+        spdlog::get(gs::log::GLOBAL_LOGGER)->error("error creating data folder: {}", e.what());
+    }
+    catch (...)
+    {
+        spdlog::get(gs::log::GLOBAL_LOGGER)->error("cannot create data folder: unknown error");
+    }
 
-    auto parent = exepath.parent_path();
-    resfolder = parent / "Data";
-    if (validateDataFolder(resfolder.string())) return resfolder.string();
-
-    resfolder = parent / "data";
-    if (validateDataFolder(resfolder.string())) return resfolder.string();
-    
-    return {};
+    return dataFolder.string();
 }
 
-void recompileDatabase(const std::string& dataFolder)
+void recompileDatabase(const std::string& dataFolder, const std::string& source_folder)
 {
-    gs::RegionDatabaseCompiler compiler{ dataFolder };
+    gs::RegionDatabaseCompiler compiler{ dataFolder, source_folder };
     if (compiler.compile() != gs::RegionDatabaseCompiler::Result::SUCCESS)
     {
         spdlog::get(gs::log::GLOBAL_LOGGER)->error("cannot compile database");
@@ -128,7 +141,7 @@ int main(int argc, char *argv[])
         ("loglevel", po::value<std::string>(), "trace,debug,info,warning,error,critical,off")
         ("mute", po::bool_switch()->default_value(false), "mute all sounds")
         ("screen,s", po::value<std::uint16_t>(), "start screen id")
-        ("compile-db,c", po::bool_switch()->default_value(false), "compile database")
+        ("compile-db,c", po::value<std::string>(), "compile database (folder of src data)")
         ;
 
     po::variables_map vm;
@@ -214,14 +227,15 @@ int main(int argc, char *argv[])
 
     if (!dataFolder.has_value())
     {
-    logger->critical("invalid data folder: no data folder specified");
-    return 1;
+        logger->critical("invalid data folder: no data folder specified");
+        return 1;
     }
+    logger->debug("data folder: {}", *dataFolder);
 
     if (vm.count("compile-db") > 0)
     {
         logger->info("Recompiling database in folder: {}", *dataFolder);
-        recompileDatabase(*dataFolder);
+        recompileDatabase(*dataFolder, vm["compile-db"].as<std::string>());
     }
 
     if (vm.count("screen") > 0)
