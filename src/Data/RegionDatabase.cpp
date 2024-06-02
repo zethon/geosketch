@@ -202,6 +202,9 @@ bool RegionDatabaseCompiler::createTables()
 
 bool RegionDatabaseCompiler::importData()
 {
+    static const std::vector<std::string> special_fields = 
+        { "parent", "type", "factoids", "subregions", "name" };
+
     std::vector<nl::json> region_files;
 
     for (const auto& file : std::filesystem::directory_iterator(_source))
@@ -228,6 +231,34 @@ bool RegionDatabaseCompiler::importData()
         }
     }
     _logger->debug("loaded {} region files", region_files.size());
+
+    // process continents
+    for (const auto& jdat : region_files)
+    {
+        if (jdat["region"].is_null())
+        {
+            _logger->error("no region data in json");
+            continue;
+        }
+
+        const auto& region = jdat["region"];
+        if (region["type"].is_null() || region["type"].get<std::string>() != "continent")
+        {
+            continue;
+        }
+
+        _logger->debug("processing continent: {}", region["name"].get<std::string>());
+        for (const auto& [key,value] : region.items())
+        {
+            // make sure that `key` is not in `special_fields`
+            if (std::find(special_fields.begin(), special_fields.end(), key) != special_fields.end())
+            {
+                continue;
+            }
+
+            _logger->debug("key: {}, value: {}", key, value.dump());
+        }
+    }
 
 
      return true;
