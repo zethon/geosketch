@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <filesystem>
 
 #include <sqlite3.h> 
 
@@ -42,10 +43,12 @@ private:
     bool createTables();
     bool importData();
 
-    sqlite3* _db;
+    sqlite3* _db = nullptr;
     std::string _folder;
     std::string _source;
-    log::SpdLogPtr _logger;
+
+    std::filesystem::path   _dbfile;
+    log::SpdLogPtr          _logger;
 };
 
 

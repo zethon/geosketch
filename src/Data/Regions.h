@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <memory>
+#include <any>
 
 #include <nlohmann/json.hpp>
 
@@ -55,6 +56,8 @@ protected:
     }
 
 public:
+    using Stats = std::map<std::string, std::any>;
+
     std::string name() const { return _name; }
     RegionType type() const { return _type; }
 
@@ -81,6 +84,7 @@ public:
 
     bool operator==(const Region& other) const;
     bool operator!=(const Region& other) const;
+
 };
 
 class Continent : public Region
@@ -112,6 +116,11 @@ public:
         _type = RegionType::COUNTY;
     }
 };
+
+using ContinentPtr = std::shared_ptr<Continent>;
+using CountryPtr = std::shared_ptr<Country>;
+using StatePtr = std::shared_ptr<State>;
+using CountyPtr = std::shared_ptr<County>;
 
 } // namespace gs
 

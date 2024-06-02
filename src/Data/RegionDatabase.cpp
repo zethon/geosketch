@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <fstream>
 
 #include "../GeoSketchLogger.h"
 
@@ -38,6 +39,7 @@ RegionDatabase::RegionDatabase(const std::string& folder)
 RegionDatabaseCompiler::RegionDatabaseCompiler(const std::string& folder, const std::string& source)
     : _folder{ folder },
       _source{ source },
+      _dbfile{ std::filesystem::path{folder} / REGION_DATABASE_FILE },
       _logger{ log::initializeLogger("RegionDatabaseCompiler") }
 {
 }
@@ -81,6 +83,37 @@ auto RegionDatabaseCompiler::compile() -> Result
 
 bool RegionDatabaseCompiler::backup()
 {
+    // see https://github.com/zethon/geosketch/issues/4 for how to enhance
+    // this function to keep multiple backups
+    try
+    {
+        const auto _dbfile_backup = std::filesystem::path{ _dbfile.string() + ".backup" };
+        if (std::filesystem::exists(_dbfile_backup))
+        {
+            std::filesystem::remove(_dbfile_backup);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        _logger->error("cannot remove existing backup: {}", e.what());
+        return false;
+    }
+
+    try
+    {
+        if (std::filesystem::exists(_dbfile))
+        {
+            auto backup = _dbfile;
+            backup += ".backup";
+            std::filesystem::rename(_dbfile, backup);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        _logger->error("cannot rename existing database: {}", e.what());
+        return false;
+    }
+
     return true;
 }
 
@@ -121,10 +154,7 @@ CREATE TABLE "stats" (
 
 bool RegionDatabaseCompiler::createNewDB()
 {
-    std::filesystem::path dbfile = _folder;
-    dbfile /= REGION_DATABASE_FILE;
-
-    int rc = sqlite3_open_v2(dbfile.string().c_str(), &_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+    int rc = sqlite3_open_v2(_dbfile.string().c_str(), &_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
     if (rc != SQLITE_OK)
     {
         _logger->error("cannot open database: {}", sqlite3_errmsg(_db));
@@ -168,9 +198,39 @@ bool RegionDatabaseCompiler::createTables()
     return true;
 }
 
+// -r F:\src\lulzapps\geosketch\resources -w  1360x765 --mute  -c F:\src\lulzapps\geosketch\geosketch-data\region-data
+
 bool RegionDatabaseCompiler::importData()
 {
-    return true;
+    std::vector<nl::json> region_files;
+
+    for (const auto& file : std::filesystem::directory_iterator(_source))
+    {
+        if (file.is_regular_file() && file.path().extension() == ".dat")
+        {
+            _logger->info("importing data from file: {}", file.path().string());
+            std::ifstream ifs(file.path().string().c_str());
+            if (!ifs.is_open())
+            {
+                _logger->error("cannot open file: {}", file.path().string());
+                continue;
+            }
+
+            try
+            {
+                region_files.emplace_back(nl::json::parse(ifs));
+            }
+            catch (const std::exception& e)
+            {
+                _logger->error("cannot parse json from file: {}", e.what());
+                continue;
+            }
+        }
+    }
+    _logger->debug("loaded {} region files", region_files.size());
+
+
+     return true;
 }
 
 } // namespace gs

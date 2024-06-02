@@ -74,7 +74,7 @@ std::optional<std::string> defaultDataFolder()
     try
     {
 #ifdef _WINDOWS
-        throw std::runtime_error("default data folder not implemented");
+        dataFolder = fs::path{ lz::getDataFolder() } / APP_NAME_LONG;
 #elif defined(__APPLE__)
         dataFolder = fs::path{lz::getDataFolder()} / fmt::format(".{}", APP_DOMAIN);
 #else
