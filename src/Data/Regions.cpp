@@ -51,20 +51,44 @@ bool Region::operator!=(const Region& other) const
     return !(*this == other);
 }
 
-void from_json(const nl::json& j, Region& region)
-{
-    j.at("name").get_to(region._name);
-}
+//void from_json(const nl::json& j, Continent& continent)
+//{
+//    //j.at("name").get_to(continent._name);
+//    //continent._type = j["type"].get<RegionType>();
+//    //assert(continent._type == RegionType::CONTINENT);
+//}
+
+//void from_json(const nl::json& j, Country& country)
+//{
+//    //j.at("name").get_to(country._name);
+//    //country._type = j["type"].get<RegionType>();
+//    //assert(country._type == RegionType::COUNTRY);
+//}
+
+//void from_json(const nl::json& j, State& state)
+//{
+//}
+//
+//void from_json(const nl::json& j, County& county)
+//{
+//}
 
 void to_json(nl::json& j, const Region& info)
 {
-    j = nl::json{ {"name", info._name} };
+    j = nl::json
+    { 
+        {"name", info._name}
+    };
 }
 
 void from_json(const nl::json& j, RegionType& type)
 {
     std::string s;
     j.get_to(s);
+
+    std::transform(s.begin(), s.end(), s.begin(),
+        [](unsigned char c) { return std::toupper(c); });
+
     if (s == "CONTINENT") type = RegionType::CONTINENT;
     else if (s == "COUNTRY") type = RegionType::COUNTRY;
     else if (s == "STATE") type = RegionType::STATE;
@@ -73,4 +97,4 @@ void from_json(const nl::json& j, RegionType& type)
     throw std::runtime_error("Invalid region type");
 }
 
-}
+} // namespace gs

@@ -3,6 +3,7 @@
 
 #include "../src/Data/RegionDatabase.h"
 
+namespace nl = nlohmann;
 
 BOOST_AUTO_TEST_SUITE(RegionsTests)
 
@@ -61,6 +62,34 @@ BOOST_AUTO_TEST_CASE(region_hash)
     BOOST_TEST(std::hash<gs::Region>{}(*(nacontinent->children()[0])) == std::hash<gs::Region>{}(*usa_na));
     BOOST_TEST(std::hash<gs::Region>{}(*usa_sa) == std::hash<gs::Region>{}(*(sacontinent->children()[0])));
     BOOST_TEST(std::hash<gs::Region>{}(*usa_af) == std::hash<gs::Region>{}(*(afcontinent->children()[0])));
+}
+
+BOOST_AUTO_TEST_CASE(json_read_write)
+{
+    constexpr auto json = R"(
+{
+    "type" : "country",
+    "name" : "Canada",
+    "capital" : "Ottawa",
+    "area" : 9984670,
+    "population" : 36624199,
+    "currency" : "Canadian Dollar",
+    "language" : "English, French",
+    "flag" : "canada.png",
+    "factoids":
+    [
+        "Canada has the longest coastline of any country in the world.",
+        "Canada has the longest highway in the world"
+    ]
+}
+    )";
+
+    nl::json j = nl::json::parse(json);
+    auto type = j["type"].get<gs::RegionType>();
+    BOOST_TEST((type == gs::RegionType::COUNTRY));
+
+    //auto region = j.template get<gs::Country>();
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

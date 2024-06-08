@@ -61,13 +61,13 @@ class RegionDB
 public:
     RegionDB(const std::vector<std::string>& data);
 
-    RegionPtr current()
+    Region::Ptr current()
     {
         if (_index >= _countries.size()) return nullptr;
         return (_countries[_index]);
     }
 
-    RegionPtr next()
+    Region::Ptr next()
     {
         _index++;
         if (_index >= _countries.size()) return nullptr;
@@ -75,7 +75,7 @@ public:
     }
 
 private:
-    std::vector<RegionPtr> _countries;
+    Region::List _countries;
     std::size_t _index { 0 };
 };
 

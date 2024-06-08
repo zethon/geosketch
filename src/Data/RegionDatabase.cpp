@@ -232,6 +232,9 @@ bool RegionDatabaseCompiler::importData()
     }
     _logger->debug("loaded {} region files", region_files.size());
 
+
+    std::map<std::string, std::shared_ptr<gs::Continent>> regions;
+
     // process continents
     for (const auto& jdat : region_files)
     {
@@ -247,6 +250,8 @@ bool RegionDatabaseCompiler::importData()
             continue;
         }
 
+        //auto continent = jdat["region"].get<gs::Region>();
+
         _logger->debug("processing continent: {}", region["name"].get<std::string>());
         for (const auto& [key,value] : region.items())
         {
@@ -258,6 +263,10 @@ bool RegionDatabaseCompiler::importData()
 
             _logger->debug("key: {}, value: {}", key, value.dump());
         }
+
+        
+
+        // regions.insert()
     }
 
 
