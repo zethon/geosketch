@@ -47,4 +47,20 @@ BOOST_AUTO_TEST_CASE(complex_compare_regions_test)
     BOOST_TEST(*usa_sa != *usa_af);
 }
 
+BOOST_AUTO_TEST_CASE(region_hash)
+{
+    auto nacontinent = std::make_shared<gs::Continent>("North America");
+    auto usa_na = nacontinent->addChild<gs::Country>("USA");
+
+    auto sacontinent = std::make_shared<gs::Continent>("South America");
+    auto usa_sa = sacontinent->addChild<gs::Country>("USA");
+
+    auto afcontinent = std::make_shared<gs::Continent>("Africa");
+    auto usa_af = afcontinent->addChild<gs::Country>("USA");
+
+    BOOST_TEST(std::hash<gs::Region>{}(*(nacontinent->children()[0])) == std::hash<gs::Region>{}(*usa_na));
+    BOOST_TEST(std::hash<gs::Region>{}(*usa_sa) == std::hash<gs::Region>{}(*(sacontinent->children()[0])));
+    BOOST_TEST(std::hash<gs::Region>{}(*usa_af) == std::hash<gs::Region>{}(*(afcontinent->children()[0])));
+}
+
 BOOST_AUTO_TEST_SUITE_END()

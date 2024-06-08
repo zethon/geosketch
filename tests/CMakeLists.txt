@@ -20,6 +20,8 @@ function(create_test testname SOURCEFILES LINKEDLIBRARIES)
 endfunction(create_test)
 
 set(REGION_SOURCE_FILES
+    ../src/GeoSketchLogger.cpp
+    ../src/GeoSketchLogger.h
     ../src/Data/RegionDatabase.h
     ../src/Data/RegionDatabase.cpp
     ../src/Data/Regions.h

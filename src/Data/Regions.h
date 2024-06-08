@@ -5,6 +5,7 @@
 #include <any>
 
 #include <nlohmann/json.hpp>
+#include <fmt/format.h>
 
 namespace nl = nlohmann;
 
@@ -127,4 +128,21 @@ using CountyPtr = std::shared_ptr<County>;
 namespace std
 {
     std::ostream& operator<<(std::ostream& os, const gs::Region& region);
+
+    template<>
+    struct hash<gs::Region>
+    {
+        std::size_t operator()(const gs::Region& region) const
+        {
+            auto hash_string = fmt::format("{}_{}", region.type(), region.name());
+            auto parent = region.parent();
+            while (parent)
+            {
+                hash_string += fmt::format("_{}_{}", parent->type(), parent->name());
+                parent = parent->parent();
+            }
+
+            return std::hash<std::string>{}(hash_string);
+        }
+    };
 }

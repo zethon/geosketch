@@ -5,7 +5,10 @@
 
 #include <sqlite3.h> 
 
+#include "../GeoSketchLogger.h"
+
 #include "Regions.h"
+
 
 namespace gs
 {
