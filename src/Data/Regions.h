@@ -17,7 +17,6 @@ namespace gs
 //          states/provinces/territories
 //              counties
 
-
 enum class RegionType : std::uint8_t
 {
     NONE = 0,
@@ -27,11 +26,10 @@ enum class RegionType : std::uint8_t
     COUNTY,
 };
 
-void from_json(const nl::json& j, RegionType& type);
-
 class Region
     : public std::enable_shared_from_this<Region>
 {
+    friend void to_json(nl::json& j, const Region& info);
 
 public:
     using Ptr = std::shared_ptr<Region>;
@@ -70,14 +68,13 @@ public:
 protected:
     RegionType _type = RegionType::NONE;
 
+    Region() = default;
+
     explicit Region(const std::string& name)
         : _name{ name }
     {
         // nothing to do
     }
-
-    friend void from_json(const nl::json& j, Region& info);
-    friend void to_json(nl::json& j, const Region& info);
 
     Region::WeakPtr _parent;
     Region::List _children;
@@ -92,11 +89,10 @@ class Continent : public Region
 public:
     using Ptr = std::shared_ptr<Continent>;
 
-    explicit Continent() = default;
+    Continent() = default;
 
     explicit Continent(const std::string& name) 
         : Region(name) { _type = RegionType::CONTINENT; }
-
 };
 
 class Country : public Region
@@ -105,6 +101,8 @@ class Country : public Region
 
 public:
     using Ptr = std::shared_ptr<Country>;
+
+    Country() = default;
 
     explicit Country(const std::string& name) 
         : Region(name) { _type = RegionType::COUNTRY; }
@@ -117,6 +115,8 @@ class State : public Region
 public:
     using Ptr = std::shared_ptr<State>;
 
+    State() = default;
+
     explicit State(const std::string& name) 
         : Region(name) { _type = RegionType::STATE; }
 };
@@ -128,37 +128,27 @@ class County : public Region
 public:
     using Ptr = std::shared_ptr<County>;
 
+    County() = default;
+
     explicit County(const std::string& name)
         : Region(name) {
         _type = RegionType::COUNTY;
     }
 };
 
+void from_json(const nl::json& j, RegionType& type);
 
-inline void from_json(const nl::json& j, Continent& continent)
-{
-}
-
-inline void from_json(const nl::json& j, Country& country)
-{
-
-}
-
-inline void from_json(const nl::json& j, State& state)
-{
-
-}
-
-inline void from_json(const nl::json& j, County& county)
-{
-
-}
+void from_json(const nl::json& j, Continent& continent);
+void from_json(const nl::json& j, Country& country);
+void from_json(const nl::json& j, State& state);
+void from_json(const nl::json& j, County& county);
 
 } // namespace gs
 
 namespace std
 {
     std::ostream& operator<<(std::ostream& os, const gs::Region& region);
+    std::ostream& operator<<(std::ostream& os, const gs::RegionType& type);
 
     template<>
     struct hash<gs::Region>

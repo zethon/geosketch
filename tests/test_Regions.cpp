@@ -88,8 +88,9 @@ BOOST_AUTO_TEST_CASE(json_read_write)
     auto type = j["type"].get<gs::RegionType>();
     BOOST_TEST((type == gs::RegionType::COUNTRY));
 
-    //auto region = j.template get<gs::Country>();
-
+    auto region = j.template get<gs::Country>();
+    BOOST_TEST(region.name() == "Canada");
+    BOOST_TEST(region.type() == gs::RegionType::COUNTRY);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
