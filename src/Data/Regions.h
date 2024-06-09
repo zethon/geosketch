@@ -23,8 +23,27 @@ enum class RegionType : std::uint8_t
     CONTINENT,
     COUNTRY,
     STATE,
-    COUNTY,
+    COUNTY
 };
+
+inline std::string RegionTypeToString(RegionType type)
+{
+    switch (type)
+    {
+        case RegionType::CONTINENT:
+            return "CONTINENT";
+        case RegionType::COUNTRY:
+            return "COUNTRY";
+        case RegionType::STATE:
+            return "STATE";
+        case RegionType::COUNTY:
+            return "COUNTY";
+        default:
+            return "NONE";
+    }
+
+    return {};
+}
 
 class Region
     : public std::enable_shared_from_this<Region>
@@ -40,6 +59,7 @@ public:
 
     std::string name() const { return _name; }
     RegionType type() const { return _type; }
+    std::string typeString() const { return RegionTypeToString(_type); }
 
     Region::List children() const { return _children; }
     void addChild(Region::Ptr child)

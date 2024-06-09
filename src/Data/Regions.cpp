@@ -82,9 +82,9 @@ void to_json(nl::json& j, const Region& info)
 
 void from_json(const nl::json& j, Continent& continent)
 {
-    //j.at("name").get_to(continent._name);
-    //continent._type = j["type"].get<RegionType>();
-    //assert(continent._type == RegionType::CONTINENT);
+    j.at("name").get_to(continent._name);
+    continent._type = j["type"].get<RegionType>();
+    assert(continent._type == RegionType::CONTINENT);
 }
 
 void from_json(const nl::json& j, Country& country)

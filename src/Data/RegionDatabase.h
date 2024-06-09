@@ -13,6 +13,28 @@
 namespace gs
 {
 
+template<typename T>
+concept RegionClassType = std::is_base_of<gs::Region, T>::value;
+
+template<RegionClassType T>
+class RegionRecord
+{
+    std::int64_t    _id;
+    T::Ptr          _data;   
+
+public:
+    using Ptr = std::shared_ptr<RegionRecord<T>>;
+    RegionRecord(std::int64_t recordId, T::Ptr data)
+        : _id{ recordId }, _data{ data }
+    {
+    }
+
+    T data() const { return _data; }
+
+    std::uint64_t id() const { return _id; }
+    void setId(std::uint64_t id) { _id = id; }
+};
+
 class RegionDatabase
 {
 public:
@@ -54,6 +76,8 @@ private:
     log::SpdLogPtr          _logger;
 };
 
+
+/// OLD CODE BELOW HERE
 
 class RegionDB
 {

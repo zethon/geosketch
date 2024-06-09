@@ -150,6 +150,15 @@ CREATE TABLE "stats" (
     );
 )";
 
+
+std::string hashString(const gs::Region& value) 
+{
+    std::size_t hashValue = std::hash<gs::Region>{}(value);
+    std::stringstream ss;
+    ss << std::hex << std::setw(16) << std::setfill('0') << hashValue;
+    return ss.str();
+}
+
 }
 
 bool RegionDatabaseCompiler::createNewDB()
@@ -163,6 +172,7 @@ bool RegionDatabaseCompiler::createNewDB()
         return false;
     }
 
+    _logger->debug("created database: {}", _dbfile.string());
     return true;
 }
 
@@ -232,8 +242,10 @@ bool RegionDatabaseCompiler::importData()
     }
     _logger->debug("loaded {} region files", region_files.size());
 
+    using ContentRecordPtr = gs::RegionRecord<gs::Continent>::Ptr;
+    std::map<std::string, ContentRecordPtr> regions;
 
-    std::map<std::string, std::shared_ptr<gs::Continent>> regions;
+    constexpr auto INSERT_REGION = R"(INSERT INTO region (name, type, parent) VALUES (?, ?, ?);)";
 
     // process continents
     for (const auto& jdat : region_files)
@@ -250,7 +262,8 @@ bool RegionDatabaseCompiler::importData()
             continue;
         }
 
-        //auto continent = jdat["region"].get<gs::Region>();
+        auto continent = std::make_shared<gs::Continent>();
+        *continent = jdat["region"].get<gs::Continent>();
 
         _logger->debug("processing continent: {}", region["name"].get<std::string>());
         for (const auto& [key,value] : region.items())
@@ -264,9 +277,36 @@ bool RegionDatabaseCompiler::importData()
             _logger->debug("key: {}, value: {}", key, value.dump());
         }
 
-        
+        // insert continent into database
+        sqlite3_stmt* stmt;
+        if (sqlite3_prepare_v2(_db, INSERT_REGION, -1, &stmt, nullptr) != SQLITE_OK)
+        {
+            _logger->error("cannot prepare statement: {}", sqlite3_errmsg(_db));
+            return false;
+        }
 
-        // regions.insert()
+        if (sqlite3_bind_text(stmt, 1, continent->name().c_str(), static_cast<int>(continent->name().size()), SQLITE_TRANSIENT) != SQLITE_OK
+            || sqlite3_bind_text(stmt, 2, continent->typeString().c_str(),static_cast<int>(continent->typeString().size()), SQLITE_TRANSIENT) != SQLITE_OK
+            || sqlite3_bind_int(stmt, 3, 456) != SQLITE_OK)
+        {
+            _logger->error("cannot bind values: {}", sqlite3_errmsg(_db));
+            sqlite3_finalize(stmt);
+            return false;
+        }
+        
+        if (sqlite3_step(stmt) != SQLITE_DONE) 
+        {
+            _logger->error("cannot execute statement: {}", sqlite3_errmsg(_db));
+            sqlite3_finalize(stmt);
+            return false;
+        }
+
+        sqlite3_finalize(stmt);
+
+        const auto lastInsertId = sqlite3_last_insert_rowid(_db);
+        _logger->debug("added {} '{}' as record ID {}", continent->typeString(), continent->name(), lastInsertId);
+
+        regions[hashString(*continent)] = std::make_shared<gs::RegionRecord<gs::Continent>>(lastInsertId, continent);
     }
 
 
